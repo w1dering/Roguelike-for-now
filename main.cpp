@@ -17,7 +17,7 @@ int main()
 
     // Player player
     // move below to player.cpp class
-    const int moveSpd = 5;
+    const double moveSpd = 5;
     int lastKeyPressed;
     int dashingFrames = 0;
     int currentMoveSpd = moveSpd;
@@ -27,6 +27,7 @@ int main()
     double speed_y = 0;
     const int terminalVelocity = -30;
     int framesFalling = 0;
+    double dashes = 1;
 
     // Platform platform1
     // move below to platform.cpp class (eventually)
@@ -34,8 +35,6 @@ int main()
     double platform_y = 550;
     double platform_w = 800;
     double platform_h = 50;
-
-    cout << "Hello World" << endl;
 
     InitWindow(screenWidth, screenHeight, "My first RAYLIB program!");
     SetTargetFPS(60);
@@ -45,10 +44,10 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
-        // sprint key
+        // walk key
         if (IsKeyDown(KEY_LEFT_CONTROL))
         {
-            currentMoveSpd = 1.4 * moveSpd;
+            currentMoveSpd = 0.5 * moveSpd;
         }
         else
         {
@@ -56,8 +55,9 @@ int main()
         }
 
         // dashing
-        if (IsKeyPressed(KEY_LEFT_SHIFT))
+        if (IsKeyPressed(KEY_LEFT_SHIFT) && dashes > 0)
         {
+            dashes--;
             if (dashingFrames == 0)
             {
                 dashing = true;
@@ -65,7 +65,7 @@ int main()
             }
             speed_y = 0;
         }
-        else if (dashing)
+        if (dashing)
         {
             speed_y = 0;
             framesFalling = 0;
@@ -95,19 +95,19 @@ int main()
                 if (IsKeyDown(KEY_D))
                 {
                     ball_x += dashDistance / sqrt(2);
-                    speed_y = - dashDistance / sqrt(2);
+                    speed_y = -dashDistance / sqrt(2);
                     lastKeyPressed = 4;
                 }
                 else if (IsKeyDown(KEY_A))
                 {
                     ball_x -= dashDistance / sqrt(2);
-                    speed_y = - dashDistance / sqrt(2);
+                    speed_y = -dashDistance / sqrt(2);
                     lastKeyPressed = 3;
                 }
                 else if (!IsKeyDown(KEY_W))
                 {
                     lastKeyPressed = KEY_S;
-                    speed_y = - dashDistance;
+                    speed_y = -dashDistance;
                 }
             }
             else if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
@@ -126,7 +126,7 @@ int main()
             }
             else if (lastKeyPressed == KEY_S)
             {
-                speed_y = - dashDistance;
+                speed_y = -dashDistance;
             }
             else if (lastKeyPressed == KEY_A)
             {
@@ -149,12 +149,12 @@ int main()
             else if (lastKeyPressed == 3)
             {
                 ball_x -= dashDistance / sqrt(2);
-                speed_y = - dashDistance / sqrt(2);
+                speed_y = -dashDistance / sqrt(2);
             }
             else if (lastKeyPressed == 4)
             {
                 ball_x += dashDistance / sqrt(2);
-                speed_y = - dashDistance / sqrt(2);
+                speed_y = -dashDistance / sqrt(2);
             }
             dashingFrames--;
             if (dashingFrames == 0)
@@ -209,6 +209,51 @@ int main()
         // double check ordering of next three if else's
 
         // doesn't let ball go through walls or platforms
+
+        // jump functionality
+        if (IsKeyDown(KEY_SPACE) && (!airborne || jumpingFrames > 0)) // when space is held, they will go upwards if on the ground (!airborne) or they are able to still go up (jumpingFrames > 0)
+        {                                                             // add checker for double jump once u code that in
+            if (!airborne)
+            {
+                jumpingFrames = 30;
+                airborne = true;
+            }
+            else
+            {
+                jumpingFrames--;
+            }
+            if (speed_y == 0)
+            {
+                speed_y = 8.8;
+            }
+            else
+            {
+                speed_y -= 0.02 * (30.0 - jumpingFrames);
+            }
+        }
+        else if (airborne && jumpingFrames > 0)
+        {
+            speed_y = 1.5;
+            jumpingFrames = 0;
+            framesFalling = 0;
+        }
+        else if (airborne && !dashing)
+        {
+            // cout << "if else procced" << endl;
+            if (speed_y > 0)
+            {
+                speed_y = 0;
+            }
+            speed_y -= 0.05 * framesFalling;
+            if (speed_y < terminalVelocity) // less than because terminal velocity is negative
+            {
+                speed_y = terminalVelocity;
+            }
+            framesFalling++;
+        }
+
+        ball_y -= speed_y; // positive y is downwards
+        
         // needs to iterate through every platform on the screen
         if (ball_y >= platform_y - ball_radius)
         {
@@ -220,46 +265,13 @@ int main()
             }
             jumpingFrames = 0;
             airborne = false;
+            dashes = 1;
         }
         else
         {
             airborne = true;
         }
 
-        // jump functionality
-        if (IsKeyDown(KEY_SPACE) && (!airborne || jumpingFrames > 0)) // when space is held, they will go upwards if on the ground (!airborne) or they are able to still go up (jumpingFrames > 0)
-        { // add checker for double jump once u code that in
-            if (!airborne)
-            {
-                jumpingFrames = 30;
-                airborne = true;
-            }
-            else
-            {
-                jumpingFrames--;
-            }
-            speed_y = 10;
-        }
-        else if (airborne && jumpingFrames > 0)
-        {
-            jumpingFrames = 0;
-            framesFalling = 0;
-        }
-        else if (airborne && !dashing)
-        {
-            if (speed_y == 10) 
-            {
-                speed_y = 2;
-            }
-            speed_y -= 0.05 * framesFalling;
-            if (speed_y < terminalVelocity) // less than because terminal velocity is negative
-            {
-                speed_y = terminalVelocity;
-            } 
-            framesFalling++;
-        }
-
-        ball_y -= speed_y; // positive y is downwards
 
         // doesn't let the ball go out of bounds
         if (ball_x >= screenWidth - ball_radius)

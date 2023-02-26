@@ -13,6 +13,7 @@
 	},
 	"files.associations": {
 		"cmath": "cpp",
-		"numeric": "cpp"
+		"numeric": "cpp",
+		"ostream": "cpp"
 	}
 }
