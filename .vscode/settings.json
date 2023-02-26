@@ -12,6 +12,7 @@
 		"cpp": "g++ $fullFileName && ./a.out"
 	},
 	"files.associations": {
-		"cmath": "cpp"
+		"cmath": "cpp",
+		"numeric": "cpp"
 	}
 }
