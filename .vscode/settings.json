@@ -1,0 +1,17 @@
+{
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/*.o": true,
+		"**/*.exe": true,
+	},
+	"code-runner.executorMap": {
+		"cpp": "g++ $fullFileName && ./a.out"
+	},
+	"files.associations": {
+		"cmath": "cpp"
+	}
+}
