@@ -41,7 +41,7 @@ int main()
         }
 
         // dashing
-        if (IsKeyDown(KEY_LEFT_SHIFT))
+        if (IsKeyPressed(KEY_LEFT_SHIFT))
         {
             if (dashingFrames == 0)
             {
