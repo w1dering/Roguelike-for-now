@@ -2,16 +2,18 @@
 #include <tgmath.h>
 #include <vector>
 #include <Particle.cpp>
+#include <iostream>
 
 using namespace std;
 
 class Player
 {
 public:
-    double radius;
-    double x;
-    double y;
-    double moveSpd = 5;
+    float width = 30;
+    float height = 30;
+    float x;
+    float y;
+    float moveSpd = 5;
     int lastKeyPressed;
     int dirFacing = 1;
     int dashingFrames = 0;
@@ -19,20 +21,33 @@ public:
     bool dashing = false;
     int jumpingFrames = 0;
     bool airborne = true;
-    double speed_x = 0;
-    double speed_y = 0;
+    float speed_x = 0;
+    float speed_y = 0;
     const int terminalVelocity = -30;
     int framesFalling = 0;
     int dashes = 1;
     int maxDashes = 1;
     Color playerColor = WHITE;
-    std::vector<Particle> particles;
+    int hp = 100;
+    int maxHp = 100;
+
+    // coords of dash shadows
+    Vector3 dashShadows[6];
+    bool showDashShadows = false;
+
+    // Hitbox vectors
+    Vector2 hitbox[3][3];
 
     Player() // should probably have some stuff in here but idk what
     {
+        for (int i = 0; i < 6; i++)
+        {
+            Vector3 vec3{-1, -1, -1};
+            dashShadows[i] = vec3;
+        }
     }
 
-    void move(double &x, double &y, double &ball_radius)
+    void move(float &x, float &y)
     {
         speed_x = 0;
         // walk key
@@ -52,16 +67,23 @@ public:
             if (dashingFrames == 0)
             {
                 dashing = true;
-                dashingFrames = 15;
+                dashingFrames = 16;
+            }
+            for (int i = 0; i < 6; i++)
+            {
+                Vector3 vec3{-1, -1, -1};
+                dashShadows[i] = vec3;
             }
             speed_y = 0;
+            showDashShadows = true;
         }
+
         if (dashing)
         {
             speed_y = 0;
             framesFalling = 0;
             jumpingFrames = 0;
-            double dashDistance = currentMoveSpd * (1 + dashingFrames / 5.0);
+            float dashDistance = currentMoveSpd * (1 + dashingFrames / 5.0);
             if (((IsKeyDown(KEY_W) && IsKeyDown(KEY_S)) || (!IsKeyDown(KEY_W) && !IsKeyDown(KEY_S))) &&
                 ((IsKeyDown(KEY_A) && IsKeyDown(KEY_D)) || (!IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))))
             {
@@ -266,7 +288,7 @@ public:
 
         // jump functionality
         if (IsKeyDown(KEY_SPACE) && (!airborne || jumpingFrames > 0)) // when space is held, they will go upwards if on the ground (!airborne) or they are able to still go up (jumpingFrames > 0)
-        {                                                             // add checker for double jump once u code that in
+        {                                                             // add checker for float jump once u code that in
             if (!airborne)
             {
                 jumpingFrames = 30;
@@ -293,7 +315,6 @@ public:
         }
         else if (airborne && !dashing)
         {
-            // cout << "if else procced" << endl;
             if (speed_y > 0)
             {
                 speed_y = 0;
@@ -306,7 +327,23 @@ public:
             framesFalling++;
         }
 
+        if (showDashShadows)
+        {
+            dashShadows[(int)ceil(dashingFrames / 3)].x = x;
+            dashShadows[(int)ceil(dashingFrames / 3)].y = y;
+        }
+
+
         x += speed_x;
         y -= speed_y; // positive y is downwards
+
+        for (int r = 0; r < 3; r++)
+        {
+            for (int c = 0; c < 3; c++)
+            {
+                hitbox[r][c].x = (x - width / 2.0) + (width / 2.0) * r;
+                hitbox[r][c].y = (y - height / 2.0) + (height / 2.0) * c;
+            }
+        }
     }
 };

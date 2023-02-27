@@ -12,23 +12,18 @@ using namespace std;
 int main()
 {
 
-    const int screenWidth = 1920;
-    const int screenHeight = 1080;
+    const int screenWidth = 800;
+    const int screenHeight = 600;
 
     // Player player
     // move below to player.cpp class
     Player player;
     player.x = 100;
     player.y = 100;
-    player.radius = 15;
 
     // Platform platform1
     // move below to platform.cpp class (eventually)
-    Platform ground;
-    ground.platform_w = screenWidth;
-    ground.platform_h = 50;
-    ground.platform_x = 0;
-    ground.platform_y = screenHeight - ground.platform_h;
+    Platform ground(0, screenHeight - 50, screenWidth + 50, 50);
 
     InitWindow(screenWidth, screenHeight, "Roguelike for now");
     SetTargetFPS(60);
@@ -38,33 +33,60 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
-        player.move(player.x, player.y, player.radius);
+        player.move(player.x, player.y);
         ground.collision(player);
 
         // doesn't let the ball go out of bounds
-        if (player.x >= screenWidth - player.radius)
-            player.x = screenWidth - player.radius;
-        if (player.x <= player.radius)
-            player.x = player.radius;
-        if (player.y >= screenHeight - player.radius)
-            player.y = screenHeight - player.radius;
-        if (player.y <= player.radius)
-            player.y = player.radius;
+        if (player.x >= screenWidth - player.width / 2.0)
+            player.x = screenWidth - player.width / 2.0;
+        if (player.x <= player.width / 2.0)
+            player.x = player.width / 2.0;
+        if (player.y >= screenHeight - player.height / 2.0)
+            player.y = screenHeight - player.height / 2.0;
+        if (player.y <= player.height / 2.0)
+            player.y = player.height / 2.0;
+
+        if (player.showDashShadows == true)
+        {
+            if (player.dashingFrames % 3 == 0 && player.dashShadows[0].z < 0)
+            {
+                player.dashShadows[player.dashingFrames / 3].z = 180;
+            }
+
+            for (int i = 5; i >= 0; i--)
+            {
+                if (player.dashShadows[i].z > 0)
+                {
+                    Color shadowColor{102, 191, 255, (unsigned char) player.dashShadows[i].z};
+                    DrawCircle(player.dashShadows[i].x, player.dashShadows[i].y, player.width / 2.0, shadowColor);
+                    player.dashShadows[i].z -= 5;
+                    if (i == 0 && player.dashShadows[0].z < 0 &&
+                        player.dashShadows[1].z < 0 &&
+                        player.dashShadows[2].z < 0 &&
+                        player.dashShadows[3].z < 0 &&
+                        player.dashShadows[4].z < 0 &&
+                        player.dashShadows[5].z < 0)
+                    {
+                        player.showDashShadows = false;
+                    }
+                }
+            }
+        }
+
+        DrawRectangle(ground.platform.x, ground.platform.y, ground.platform.width, ground.platform.height, WHITE); // draw platform
 
         if (player.dashes > 0)
         {
-            DrawCircle(player.x, player.y, player.radius, SKYBLUE); // sky blue ring around player to indicate they have a dash
-            DrawCircle(player.x, player.y, player.radius * 0.6, player.playerColor);
+            DrawCircle(player.x, player.y, player.width / 2.0, SKYBLUE); // sky blue ring around player to indicate they have a dash
+            DrawCircle(player.x, player.y, player.width / 2.0 * 0.6, player.playerColor);
         }
         else
         {
-            DrawCircle(player.x, player.y, player.radius, player.playerColor);
+            DrawCircle(player.x, player.y, player.width / 2.0, player.playerColor);
         }
-        DrawRectangle(ground.platform_x, ground.platform_y, ground.platform_w, ground.platform_h, WHITE);
 
         EndDrawing();
     }
-
     CloseWindow();
     return 0;
 }

@@ -1,22 +1,29 @@
 #include <Player.cpp>
+#include <raylib.h>
 
 class Platform
 {
 public:
-    double platform_w;
-    double platform_h;
-    double platform_x;
-    double platform_y;
+    Rectangle platform{0, 0, 0, 0};
 
-    Platform()
+    Platform(float platform_x, float platform_y, float platform_w, float platform_h)
     {
+
+        platform.x = platform_x;
+        platform.y = platform_y;
+        platform.width = platform_w;
+        platform.height = platform_h;
+
     }
 
     void collision(Player &player)
     {
-        if (player.y >= platform_y - player.radius)
+        
+        if (CheckCollisionPointRec(player.hitbox[2][0], platform) ||
+        CheckCollisionPointRec(player.hitbox[2][1], platform) ||
+        CheckCollisionPointRec(player.hitbox[2][2], platform))
         {
-            player.y = platform_y - player.radius;
+            player.y = platform.y - player.height / 2.0;
             player.framesFalling = 0;
             if (player.speed_y < 0)
             {
