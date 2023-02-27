@@ -18,8 +18,8 @@ int main()
     // Player player
     // move below to player.cpp class
     Player player;
-    player.ball_x = 100;
-    player.ball_y = 100;
+    player.x = 100;
+    player.y = 100;
     player.radius = 15;
 
     // Platform platform1
@@ -38,26 +38,27 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
-        player.move(player.ball_x, player.ball_y, player.radius);
+        player.move(player.x, player.y, player.radius);
+        ground.collision(player);
 
         // doesn't let the ball go out of bounds
-        if (player.ball_x >= screenWidth - player.radius)
-            player.ball_x = screenWidth - player.radius;
-        if (player.ball_x <= player.radius)
-            player.ball_x = player.radius;
-        if (player.ball_y >= screenHeight - player.radius)
-            player.ball_y = screenHeight - player.radius;
-        if (player.ball_y <= player.radius)
-            player.ball_y = player.radius;
+        if (player.x >= screenWidth - player.radius)
+            player.x = screenWidth - player.radius;
+        if (player.x <= player.radius)
+            player.x = player.radius;
+        if (player.y >= screenHeight - player.radius)
+            player.y = screenHeight - player.radius;
+        if (player.y <= player.radius)
+            player.y = player.radius;
 
         if (player.dashes > 0)
         {
-            DrawCircle(player.ball_x, player.ball_y, player.radius, SKYBLUE); // sky blue ring around player to indicate they have a dash
-            DrawCircle(player.ball_x, player.ball_y, player.radius * 0.6, player.playerColor);
+            DrawCircle(player.x, player.y, player.radius, SKYBLUE); // sky blue ring around player to indicate they have a dash
+            DrawCircle(player.x, player.y, player.radius * 0.6, player.playerColor);
         }
         else
         {
-            DrawCircle(player.ball_x, player.ball_y, player.radius, player.playerColor);
+            DrawCircle(player.x, player.y, player.radius, player.playerColor);
         }
         DrawRectangle(ground.platform_x, ground.platform_y, ground.platform_w, ground.platform_h, WHITE);
 

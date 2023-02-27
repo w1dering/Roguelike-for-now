@@ -14,9 +14,9 @@ public:
 
     void collision(Player player)
     {
-        if (player.ball_y >= platform_y - player.radius)
+        if (player.y >= platform_y - player.radius)
         {
-            player.ball_y = platform_y - player.radius;
+            player.y = platform_y - player.radius;
             player.framesFalling = 0;
             if (player.speed_y < 0)
             {

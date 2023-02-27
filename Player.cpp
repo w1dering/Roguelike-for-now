@@ -9,8 +9,8 @@ class Player
 {
 public:
     double radius;
-    double ball_x;
-    double ball_y;
+    double x;
+    double y;
     double moveSpd = 5;
     int lastKeyPressed;
     int dashingFrames = 0;
@@ -30,7 +30,7 @@ public:
     {
     }
 
-    void move(double &ball_x, double &ball_y, double &ball_radius)
+    void move(double &x, double &y, double &ball_radius)
     {
         // walk key
         if (IsKeyDown(KEY_LEFT_CONTROL))
@@ -63,13 +63,13 @@ public:
             {
                 if (IsKeyDown(KEY_D))
                 {
-                    ball_x += dashDistance / sqrt(2);
+                    x += dashDistance / sqrt(2);
                     speed_y = dashDistance / sqrt(2);
                     lastKeyPressed = 1;
                 }
                 else if (IsKeyDown(KEY_A))
                 {
-                    ball_x -= dashDistance / sqrt(2);
+                    x -= dashDistance / sqrt(2);
                     speed_y = dashDistance / sqrt(2);
                     lastKeyPressed = 2;
                 }
@@ -83,13 +83,13 @@ public:
             {
                 if (IsKeyDown(KEY_D))
                 {
-                    ball_x += dashDistance / sqrt(2);
+                    x += dashDistance / sqrt(2);
                     speed_y = -dashDistance / sqrt(2);
                     lastKeyPressed = 4;
                 }
                 else if (IsKeyDown(KEY_A))
                 {
-                    ball_x -= dashDistance / sqrt(2);
+                    x -= dashDistance / sqrt(2);
                     speed_y = -dashDistance / sqrt(2);
                     lastKeyPressed = 3;
                 }
@@ -101,12 +101,12 @@ public:
             }
             else if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
             {
-                ball_x += dashDistance;
+                x += dashDistance;
                 lastKeyPressed = KEY_D;
             }
             else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
             {
-                ball_x -= dashDistance;
+                x -= dashDistance;
                 lastKeyPressed = KEY_A;
             }
             else if (lastKeyPressed == KEY_W)
@@ -119,30 +119,30 @@ public:
             }
             else if (lastKeyPressed == KEY_A)
             {
-                ball_x -= dashDistance;
+                x -= dashDistance;
             }
             else if (lastKeyPressed == KEY_D)
             {
-                ball_x += dashDistance;
+                x += dashDistance;
             }
             else if (lastKeyPressed == 1) // 1 = NE, 2 = NW, 3 = SW, 4 = SE (quadrants)
             {
-                ball_x += dashDistance / sqrt(2);
+                x += dashDistance / sqrt(2);
                 speed_y = dashDistance / sqrt(2);
             }
             else if (lastKeyPressed == 2)
             {
-                ball_x -= dashDistance / sqrt(2);
+                x -= dashDistance / sqrt(2);
                 speed_y = dashDistance / sqrt(2);
             }
             else if (lastKeyPressed == 3)
             {
-                ball_x -= dashDistance / sqrt(2);
+                x -= dashDistance / sqrt(2);
                 speed_y = -dashDistance / sqrt(2);
             }
             else if (lastKeyPressed == 4)
             {
-                ball_x += dashDistance / sqrt(2);
+                x += dashDistance / sqrt(2);
                 speed_y = -dashDistance / sqrt(2);
             }
             dashingFrames--;
@@ -153,11 +153,11 @@ public:
         }
         else if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
         {
-            ball_x += currentMoveSpd; // replace with new var speed_x (eventually)
+            x += currentMoveSpd; // replace with new var speed_x (eventually)
         }
         else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
         {
-            ball_x -= currentMoveSpd;
+            x -= currentMoveSpd;
         }
 
         // jump functionality
@@ -202,6 +202,6 @@ public:
             framesFalling++;
         }
 
-        ball_y -= speed_y; // positive y is downwards
+        y -= speed_y; // positive y is downwards
     }
 };
