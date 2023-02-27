@@ -10,9 +10,10 @@ public:
 
     Platform()
     {
+
     }
 
-    void collision(Player player)
+    void collision(Player &player)
     {
         if (player.y >= platform_y - player.radius)
         {

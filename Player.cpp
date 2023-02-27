@@ -13,11 +13,13 @@ public:
     double y;
     double moveSpd = 5;
     int lastKeyPressed;
+    int dirFacing = 1;
     int dashingFrames = 0;
     int currentMoveSpd = moveSpd;
     bool dashing = false;
     int jumpingFrames = 0;
     bool airborne = true;
+    double speed_x = 0;
     double speed_y = 0;
     const int terminalVelocity = -30;
     int framesFalling = 0;
@@ -102,13 +104,13 @@ public:
             else if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
             {
                 x += dashDistance;
-                lastKeyPressed = KEY_D;
+                dirFacing = 1;
             }
             else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
             {
                 x -= dashDistance;
-                lastKeyPressed = KEY_A;
-            }
+                dirFacing = 0;
+            } 
             else if (lastKeyPressed == KEY_W)
             {
                 speed_y = dashDistance;
@@ -154,10 +156,12 @@ public:
         else if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
         {
             x += currentMoveSpd; // replace with new var speed_x (eventually)
+            lastKeyPressed = KEY_D;
         }
         else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
         {
             x -= currentMoveSpd;
+            lastKeyPressed = KEY_A;
         }
 
         // jump functionality
