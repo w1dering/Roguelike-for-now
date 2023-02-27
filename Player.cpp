@@ -6,6 +6,9 @@
 class Player
 {
 public:
+    double radius;
+    double ball_x;
+    double ball_y;
     double moveSpd = 5;
     int lastKeyPressed;
     int dashingFrames = 0;
@@ -19,7 +22,7 @@ public:
     int dashes = 1;
     int maxDashes = 1;
     Color playerColor = WHITE;
-    vector<Particle> particles;
+    std::vector<Particle> particles;
 
     Player() // should probably have some stuff in here but idk what
     {
