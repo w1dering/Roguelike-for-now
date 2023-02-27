@@ -1,7 +1,9 @@
 #include <raylib.h>
 #include <tgmath.h>
-#include <Particle.cpp>
 #include <vector>
+#include <Particle.cpp>
+
+using namespace std;
 
 class Player
 {

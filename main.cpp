@@ -5,8 +5,6 @@
 #include <iostream>
 #include <vector>
 
-
-#include <Player.cpp>
 #include <Platform.cpp>
 
 using namespace std;
