@@ -1,32 +1,40 @@
 #include <raylib.h>
 #include <tgmath.h>
-#include <Particle.cpp>
 #include <vector>
+#include <Particle.cpp>
+
+using namespace std;
 
 class Player
 {
 public:
+    double radius;
+    double x;
+    double y;
     double moveSpd = 5;
     int lastKeyPressed;
+    int dirFacing = 1;
     int dashingFrames = 0;
     int currentMoveSpd = moveSpd;
     bool dashing = false;
     int jumpingFrames = 0;
     bool airborne = true;
+    double speed_x = 0;
     double speed_y = 0;
     const int terminalVelocity = -30;
     int framesFalling = 0;
     int dashes = 1;
     int maxDashes = 1;
     Color playerColor = WHITE;
-    vector<Particle> particles;
+    std::vector<Particle> particles;
 
     Player() // should probably have some stuff in here but idk what
     {
     }
 
-    void move(double &ball_x, double &ball_y, double &ball_radius)
+    void move(double &x, double &y, double &ball_radius)
     {
+        speed_x = 0;
         // walk key
         if (IsKeyDown(KEY_LEFT_CONTROL))
         {
@@ -50,23 +58,76 @@ public:
         }
         if (dashing)
         {
-
             speed_y = 0;
             framesFalling = 0;
+            jumpingFrames = 0;
             double dashDistance = currentMoveSpd * (1 + dashingFrames / 5.0);
-            if (IsKeyDown(KEY_W))
+            if (((IsKeyDown(KEY_W) && IsKeyDown(KEY_S)) || (!IsKeyDown(KEY_W) && !IsKeyDown(KEY_S))) &&
+                ((IsKeyDown(KEY_A) && IsKeyDown(KEY_D)) || (!IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))))
+            {
+                if (dirFacing == 1)
+                {
+                    speed_x = dashDistance;
+                }
+                else if (dirFacing == 0)
+                {
+                    speed_x = -dashDistance;
+                }
+            }
+            else if (IsKeyDown(KEY_W))
             {
                 if (IsKeyDown(KEY_D))
                 {
-                    ball_x += dashDistance / sqrt(2);
-                    speed_y = dashDistance / sqrt(2);
-                    lastKeyPressed = 1;
+                    if (!IsKeyDown(KEY_S))
+                    {
+                        speed_y = dashDistance / sqrt(2);
+                        if (dirFacing == 1)
+                        {
+                            speed_x = dashDistance / sqrt(2);
+
+                            lastKeyPressed = 1;
+                        }
+                        else
+                        {
+                            speed_x = -dashDistance / sqrt(2);
+                        }
+                    }
+                    else
+                    {
+                        speed_x = dashDistance;
+                        lastKeyPressed = KEY_D;
+                    }
+                    if (!IsKeyDown(KEY_A))
+                    {
+
+                        dirFacing = 1;
+                    }
                 }
                 else if (IsKeyDown(KEY_A))
                 {
-                    ball_x -= dashDistance / sqrt(2);
-                    speed_y = dashDistance / sqrt(2);
-                    lastKeyPressed = 2;
+                    if (!IsKeyDown(KEY_S))
+                    {
+                        speed_y = dashDistance / sqrt(2);
+                        if (dirFacing == 0)
+                        {
+                            speed_x = -dashDistance / sqrt(2);
+                            lastKeyPressed = 2;
+                        }
+                        else
+                        {
+                            speed_x = dashDistance / sqrt(2);
+                        }
+                    }
+                    else
+                    {
+                        speed_x = -dashDistance;
+                        lastKeyPressed = KEY_A;
+                    }
+                    if (!IsKeyDown(KEY_D))
+                    {
+
+                        dirFacing = 0;
+                    }
                 }
                 else if (!IsKeyDown(KEY_S))
                 {
@@ -78,15 +139,54 @@ public:
             {
                 if (IsKeyDown(KEY_D))
                 {
-                    ball_x += dashDistance / sqrt(2);
-                    speed_y = -dashDistance / sqrt(2);
-                    lastKeyPressed = 4;
+                    if (!IsKeyDown(KEY_W))
+                    {
+                        speed_y = -dashDistance / sqrt(2);
+                        if (dirFacing == 1)
+                        {
+                            speed_x = dashDistance / sqrt(2);
+                            lastKeyPressed = 4;
+                        }
+                        else
+                        {
+                            speed_x = -dashDistance / sqrt(2);
+                        }
+                    }
+                    else
+                    {
+                        speed_x = dashDistance;
+                        lastKeyPressed = KEY_D;
+                    }
+                    if (!IsKeyDown(KEY_A))
+                    {
+
+                        dirFacing = 1;
+                    }
                 }
                 else if (IsKeyDown(KEY_A))
                 {
-                    ball_x -= dashDistance / sqrt(2);
-                    speed_y = -dashDistance / sqrt(2);
-                    lastKeyPressed = 3;
+                    if (!IsKeyDown(KEY_W))
+                    {
+                        speed_y = -dashDistance / sqrt(2);
+                        if (dirFacing == 0)
+                        {
+                            speed_x = -dashDistance / sqrt(2);
+                            lastKeyPressed = 3;
+                        }
+                        else
+                        {
+                            speed_x = dashDistance / sqrt(2);
+                        }
+                    }
+                    else
+                    {
+                        speed_x = -dashDistance;
+                        lastKeyPressed = KEY_A;
+                    }
+                    if (!IsKeyDown(KEY_D))
+                    {
+                        dirFacing = 0;
+                    }
                 }
                 else if (!IsKeyDown(KEY_W))
                 {
@@ -96,13 +196,13 @@ public:
             }
             else if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
             {
-                ball_x += dashDistance;
-                lastKeyPressed = KEY_D;
+                speed_x = dashDistance;
+                dirFacing = 1;
             }
             else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
             {
-                ball_x -= dashDistance;
-                lastKeyPressed = KEY_A;
+                speed_x = -dashDistance;
+                dirFacing = 0;
             }
             else if (lastKeyPressed == KEY_W)
             {
@@ -114,30 +214,30 @@ public:
             }
             else if (lastKeyPressed == KEY_A)
             {
-                ball_x -= dashDistance;
+                speed_x = -dashDistance;
             }
             else if (lastKeyPressed == KEY_D)
             {
-                ball_x += dashDistance;
+                speed_x = dashDistance;
             }
             else if (lastKeyPressed == 1) // 1 = NE, 2 = NW, 3 = SW, 4 = SE (quadrants)
             {
-                ball_x += dashDistance / sqrt(2);
+                speed_x = dashDistance / sqrt(2);
                 speed_y = dashDistance / sqrt(2);
             }
             else if (lastKeyPressed == 2)
             {
-                ball_x -= dashDistance / sqrt(2);
+                speed_x = -dashDistance / sqrt(2);
                 speed_y = dashDistance / sqrt(2);
             }
             else if (lastKeyPressed == 3)
             {
-                ball_x -= dashDistance / sqrt(2);
+                speed_x = -dashDistance / sqrt(2);
                 speed_y = -dashDistance / sqrt(2);
             }
             else if (lastKeyPressed == 4)
             {
-                ball_x += dashDistance / sqrt(2);
+                speed_x = dashDistance / sqrt(2);
                 speed_y = -dashDistance / sqrt(2);
             }
             dashingFrames--;
@@ -148,11 +248,20 @@ public:
         }
         else if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
         {
-            ball_x += currentMoveSpd; // replace with new var speed_x (eventually)
+            speed_x = currentMoveSpd; // replace with new var speed_x (eventually)
+            lastKeyPressed = KEY_D;
+            dirFacing = 1;
         }
         else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
         {
-            ball_x -= currentMoveSpd;
+            speed_x = -currentMoveSpd;
+            lastKeyPressed = KEY_A;
+            dirFacing = 0;
+        }
+        else if (((IsKeyDown(KEY_W) && IsKeyDown(KEY_S)) || (!IsKeyDown(KEY_W) && !IsKeyDown(KEY_S))) &&
+                 ((IsKeyDown(KEY_A) && IsKeyDown(KEY_D)) || (!IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))))
+        {
+            speed_x = 0;
         }
 
         // jump functionality
@@ -167,7 +276,7 @@ public:
             {
                 jumpingFrames--;
             }
-            if (speed_y == 0)
+            if (speed_y == 0 && !dashing)
             {
                 speed_y = 8.8;
             }
@@ -197,6 +306,7 @@ public:
             framesFalling++;
         }
 
-        ball_y -= speed_y; // positive y is downwards
+        x += speed_x;
+        y -= speed_y; // positive y is downwards
     }
 };
