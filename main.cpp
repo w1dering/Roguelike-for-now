@@ -48,24 +48,26 @@ int main()
 
         if (player.showDashShadows == true)
         {
-            if (player.dashingFrames % 3 == 0 && player.dashShadows[0].z < 0)
+            if (player.dashingFrames % 3 == 0 && player.dashingFrames != -1)
             {
-                player.dashShadows[player.dashingFrames / 3].z = 180;
+                player.dashTrail[0].z = 180;
             }
 
-            for (int i = 5; i >= 0; i--)
+            for (int i = 0; i < (int) player.dashTrail.size(); i++)
             {
-                if (player.dashShadows[i].z > 0)
+                if (player.dashTrail[i].z > 0)
                 {
-                    Color shadowColor{102, 191, 255, (unsigned char) player.dashShadows[i].z};
-                    DrawCircle(player.dashShadows[i].x, player.dashShadows[i].y, player.width / 2.0, shadowColor);
-                    player.dashShadows[i].z -= 5;
-                    if (i == 0 && player.dashShadows[0].z < 0 &&
-                        player.dashShadows[1].z < 0 &&
-                        player.dashShadows[2].z < 0 &&
-                        player.dashShadows[3].z < 0 &&
-                        player.dashShadows[4].z < 0 &&
-                        player.dashShadows[5].z < 0)
+                    Color shadowColor{102, 191, 255, (unsigned char) player.dashTrail[i].z};
+                    DrawCircle(player.dashTrail[i].x, player.dashTrail[i].y, player.width / 2.0, shadowColor);
+                    player.dashTrail[i].z -= 5;
+                }
+
+                if (player.dashTrail[i].z <= 0)
+                {
+                    vector<Vector3>::iterator it = player.dashTrail.begin();
+                    advance(it, i);
+                    player.dashTrail.erase(it);
+                    if (player.dashTrail.size() == 0)
                     {
                         player.showDashShadows = false;
                     }

@@ -16,7 +16,7 @@ public:
     float moveSpd = 5;
     int lastKeyPressed;
     int dirFacing = 1;
-    int dashingFrames = 0;
+    int dashingFrames = -1;
     int currentMoveSpd = moveSpd;
     bool dashing = false;
     int jumpingFrames = 0;
@@ -32,7 +32,7 @@ public:
     int maxHp = 100;
 
     // coords of dash shadows
-    Vector3 dashShadows[6];
+    vector<Vector3> dashTrail;
     bool showDashShadows = false;
 
     // Hitbox vectors
@@ -40,11 +40,6 @@ public:
 
     Player() // should probably have some stuff in here but idk what
     {
-        for (int i = 0; i < 6; i++)
-        {
-            Vector3 vec3{-1, -1, -1};
-            dashShadows[i] = vec3;
-        }
     }
 
     void move(float &x, float &y)
@@ -64,15 +59,10 @@ public:
         if (IsKeyPressed(KEY_LEFT_SHIFT) && dashes > 0)
         {
             dashes--;
-            if (dashingFrames == 0)
+            if (dashingFrames == -1)
             {
                 dashing = true;
                 dashingFrames = 16;
-            }
-            for (int i = 0; i < 6; i++)
-            {
-                Vector3 vec3{-1, -1, -1};
-                dashShadows[i] = vec3;
             }
             speed_y = 0;
             showDashShadows = true;
@@ -263,7 +253,7 @@ public:
                 speed_y = -dashDistance / sqrt(2);
             }
             dashingFrames--;
-            if (dashingFrames == 0)
+            if (dashingFrames == -1)
             {
                 dashing = false;
             }
@@ -327,12 +317,10 @@ public:
             framesFalling++;
         }
 
-        if (showDashShadows)
+        if (showDashShadows && dashingFrames % 3 == 0)
         {
-            dashShadows[(int)ceil(dashingFrames / 3)].x = x;
-            dashShadows[(int)ceil(dashingFrames / 3)].y = y;
+            dashTrail.insert(dashTrail.begin(), Vector3{x, y, -999});
         }
-
 
         x += speed_x;
         y -= speed_y; // positive y is downwards
