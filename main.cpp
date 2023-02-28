@@ -114,29 +114,27 @@ int main()
         // Bow primary fire
         if (IsMouseButtonDown(0) && bow.travelDistance == 0)
         { // primary fire charging
-            std::cout << "charging " << bow.chargePower << endl;
             bow.charge(player.x, player.y, GetMousePosition());
-            std::cout << "charging " << bow.chargePower << endl;
             Vector2 tempPlayerPos{player.x, player.y};
-            DrawLineEx(tempPlayerPos, bow.indicator, 10, Fade(WHITE, bow.chargePower/90));
-        }
-        else if (IsMouseButtonReleased(0))
+            DrawLineEx(tempPlayerPos, bow.indicator, 10, Fade(WHITE, bow.chargeFrames / 60));
+        } else if (IsMouseButtonReleased(0))
         { // primary fire released
             bow.arrow.x = player.x;
             bow.arrow.y = player.y;
+            bow.aimPositionX = (int) GetMouseX;
+            bow.aimPositionY = (int) GetMouseY;
             bow.travelDistance = 30;
-            std::cout << "pew" << endl;
+            bow.chargePower = bow.chargeFrames;
+            bow.chargeFrames = 0;
+            std::cout << bow.chargePower << endl;
         }
         if (bow.travelDistance > 0)
         { // arrow go nyoooooooooooooom
-            bow.fire(bow.aimAngle);
+            bow.fire(player.x, player.y, bow.aimAngle);
             bow.travelDistance--;
             DrawCircle(bow.arrow.x, bow.arrow.y, 10, WHITE);
         }
-        else
-        {
-            bow.chargePower = 0;
-        }
+        
 
         if (player.dashes > 0)
         {

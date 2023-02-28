@@ -4,10 +4,13 @@ class Bow
 public:
     Vector2 indicator;
     int indicatorLength = 50;
+    float chargeFrames;
     float chargePower = 0;
     double aimAngle;
+    int aimPositionX;
+    int aimPositionY;
     Vector2 arrow;
-    int travelDistance = 0;
+    int travelDistance = 30;
 
     void charge(float playerx, float playery, Vector2 mousePos)
     {
@@ -23,16 +26,21 @@ public:
             indicator.y = -(indicatorLength * sin(aimAngle)) + playery;
             indicator.x = -(indicatorLength * cos(aimAngle)) + playerx;
         }
-        if (chargePower < 90)
+        if (chargeFrames < 60)
         {
-            chargePower++;
+            chargeFrames++;
         }
     }
 
-    void fire(double theta)
+    void fire(float playerx, float playery, double theta)
     {
-        arrow.y += (chargePower) * sin(theta);
-        arrow.x += (chargePower) * cos(theta);
-        std::cout << "zooooom" << endl;
+        if ((aimPositionY >= playery && aimPositionX >= playerx) || (aimPositionY <= playery && aimPositionX >= playerx))
+        {
+            arrow.y += (chargePower)*sin(theta) / 2;
+            arrow.x += (chargePower)*cos(theta) / 2;
+        } else {
+            arrow.y -= (chargePower)*sin(theta) / 2;
+            arrow.x -= (chargePower)*cos(theta) / 2;
+        }
     }
 };
