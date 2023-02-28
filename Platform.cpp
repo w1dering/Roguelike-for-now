@@ -27,10 +27,19 @@ public:
         // cout << "player top left: " << player.x - player.width / (float) 2.0 << ", " << player.y - player.height / (float) 2.0 << endl;
         // cout << "platform: " << platform.x << ", " << platform.y << ", " << platform.width << ", " << platform.height << endl;
 
-        if ( CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float) 2.0, player.y - player.height / (float) 2.0, player.width, player.height},
+        if ((CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float)2.0, player.y - player.height / (float)2.0, player.width, player.height},
                                 Rectangle{platform.x, platform.y, platform.width, platform.height}) &&
-            !CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float) 2.0, prevPos.y - player.height / (float) 2.0, player.width, player.height},
-                                Rectangle{platform.x, platform.y, platform.width, platform.height}))
+             !CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float)2.0, prevPos.y - player.height / (float)2.0, player.width, player.height},
+                                 Rectangle{platform.x, platform.y, platform.width, platform.height})) || // normal case
+            // special case                                 
+            (!CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float)2.0, prevPos.y - player.height / (float)2.0, player.width, player.height},
+                                 Rectangle{platform.x, platform.y, platform.width, platform.height}) && // previous position is not colliding
+             !CheckCollisionRecs(Rectangle{player.x - player.width / (float)2.0, prevPos.y - player.height / (float)2.0, player.width, player.height},
+                                 Rectangle{platform.x, platform.y, platform.width, platform.height}) && // if prev position continued x dir, would not collide
+             !CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float)2.0, player.y - player.height / (float)2.0, player.width, player.height},
+                                 Rectangle{platform.x, platform.y, platform.width, platform.height}) && // if prev position continued y dir, would not collide
+             CheckCollisionRecs(Rectangle{player.x - player.width / (float)2.0, player.y - player.height / (float)2.0, player.width, player.height},
+                                Rectangle{platform.x, platform.y, platform.width, platform.height})))
         {
             // player bottom, platform top checker
             if (player.y > prevPos.y)
@@ -48,28 +57,35 @@ public:
             {
                 player.y = platform.y + platform.height + player.height / 2.0;
                 player.speed_y = 0;
-                cout << "player top collide" << endl;
             }
         }
-        // player left, platform right checker
-        else if (CheckCollisionRecs(Rectangle{player.x - player.width / (float) 2.0, prevPos.y - player.height / (float) 2.0, player.width, player.height},
-                               Rectangle{platform.x, platform.y, platform.width, platform.height}) &&
-            !CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float) 2.0, prevPos.y - player.height / (float) 2.0, player.width, player.height},
-                                Rectangle{platform.x, platform.y, platform.width, platform.height}))
+        else if (CheckCollisionRecs(Rectangle{player.x - player.width / (float)2.0, prevPos.y - player.height / (float)2.0, player.width, player.height},
+                                    Rectangle{platform.x, platform.y, platform.width, platform.height}) &&
+                 !CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float)2.0, prevPos.y - player.height / (float)2.0, player.width, player.height},
+                                     Rectangle{platform.x, platform.y, platform.width, platform.height}))
         {
             // player right, platform left checker
             if (player.x > prevPos.x)
             {
                 player.x = platform.x - player.width / 2.0;
                 player.speed_x = 0;
-                cout << "player right collide" << endl;
             }
+            // player left, platform right checker
             else
             {
                 player.x = platform.x + platform.width + player.width / 2.0;
                 player.speed_x = 0;
-                cout << "player left collide" << endl;
             }
         }
+    }
+
+    float slope(float x1, float y1, float x2, float y2)
+    {
+        return (y2 - y1) / (x2 - x1);
+    }
+
+    float distance(float x1, float y1, float x2, float y2)
+    {
+        return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
     }
 };

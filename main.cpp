@@ -59,7 +59,6 @@ int main()
                 player.airborne = !(player.y >= platforms[i].platform.y - player.height / 2.0 && 
                 player.y <= platforms[i].platform.y + 2 - player.height / 2.0 );
             }
-            
             DrawRectangle(platforms[i].platform.x, platforms[i].platform.y, platforms[i].platform.width, platforms[i].platform.height, WHITE); // draw platform
         }
 
@@ -72,6 +71,16 @@ int main()
             player.y = screenHeight - player.height / 2.0;
         if (player.y <= player.height / 2.0)
             player.y = player.height / 2.0;
+
+        // updates the 3x3 grid of player hitboxes, after collisions have been calculated and adjustments made
+        for (int r = 0; r < 3; r++)
+        {
+            for (int c = 0; c < 3; c++)
+            {
+                player.hitbox[r][c].x = player.x + (player.width / 2.0) * (c - 1);
+                player.hitbox[r][c].y = player.y + (player.height / 2.0) * (r - 1);
+            }
+        }
 
         if (player.showDashShadows == true)
         {
