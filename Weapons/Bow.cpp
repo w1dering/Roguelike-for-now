@@ -6,6 +6,8 @@ public:
     int indicatorLength = 50;
     float chargePower = 0;
     double aimAngle;
+    Vector2 arrow;
+    int travelDistance = 0;
 
     void charge(float playerx, float playery, Vector2 mousePos)
     {
@@ -15,14 +17,22 @@ public:
         {
             indicator.y = (indicatorLength * sin(aimAngle)) + playery;
             indicator.x = (indicatorLength * cos(aimAngle)) + playerx;
-        } else {
+        }
+        else
+        {
             indicator.y = -(indicatorLength * sin(aimAngle)) + playery;
             indicator.x = -(indicatorLength * cos(aimAngle)) + playerx;
         }
-        chargePower++;
+        if (chargePower < 90)
+        {
+            chargePower++;
+        }
     }
 
-    void fire() {
-        
+    void fire(double theta)
+    {
+        arrow.y += (chargePower) * sin(theta);
+        arrow.x += (chargePower) * cos(theta);
+        std::cout << "zooooom" << endl;
     }
 };

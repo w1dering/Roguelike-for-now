@@ -56,8 +56,8 @@ int main()
             platforms[i].collision(player);
             if (player.airborne)
             {
-                player.airborne = !(player.y >= platforms[i].platform.y - player.height / 2.0 && 
-                player.y <= platforms[i].platform.y + 2 - player.height / 2.0 );
+                player.airborne = !(player.y >= platforms[i].platform.y - player.height / 2.0 &&
+                                    player.y <= platforms[i].platform.y + 2 - player.height / 2.0);
             }
             DrawRectangle(platforms[i].platform.x, platforms[i].platform.y, platforms[i].platform.width, platforms[i].platform.height, WHITE); // draw platform
         }
@@ -112,14 +112,30 @@ int main()
         }
 
         // Bow primary fire
-        if (IsMouseButtonDown(0)) { // primary fire charging
+        if (IsMouseButtonDown(0) && bow.travelDistance == 0)
+        { // primary fire charging
+            std::cout << "charging " << bow.chargePower << endl;
             bow.charge(player.x, player.y, GetMousePosition());
+            std::cout << "charging " << bow.chargePower << endl;
             Vector2 tempPlayerPos{player.x, player.y};
             DrawLineEx(tempPlayerPos, bow.indicator, 10, Fade(WHITE, bow.chargePower/90));
         }
-        if (IsMouseButtonReleased(0) && bow.chargePower>=30) { // primary fire released
+        else if (IsMouseButtonReleased(0))
+        { // primary fire released
+            bow.arrow.x = player.x;
+            bow.arrow.y = player.y;
+            bow.travelDistance = 30;
+            std::cout << "pew" << endl;
+        }
+        if (bow.travelDistance > 0)
+        { // arrow go nyoooooooooooooom
+            bow.fire(bow.aimAngle);
+            bow.travelDistance--;
+            DrawCircle(bow.arrow.x, bow.arrow.y, 10, WHITE);
+        }
+        else
+        {
             bow.chargePower = 0;
-            
         }
 
         if (player.dashes > 0)
