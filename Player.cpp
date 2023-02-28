@@ -23,7 +23,7 @@ public:
     bool airborne = true;
     float speed_x = 0;
     float speed_y = 0;
-    const int terminalVelocity = -30;
+    const float terminalVelocity = -12.5;
     int framesFalling = 0;
     int dashes = 1;
     int maxDashes = 1;
@@ -64,13 +64,19 @@ public:
                 dashing = true;
                 dashingFrames = 16;
             }
-            speed_y = 0;
+            if (airborne)
+                speed_y = 0;
             showDashShadows = true;
         }
 
         if (dashing)
         {
-            speed_y = 0;
+            if (airborne)
+                speed_y = 0;
+            // if (!airborne)
+            // {
+            //     speed_y = 1.5; // must be the same as initial falling speed in Platform.cpp
+            // }
             framesFalling = 0;
             jumpingFrames = 0;
             float dashDistance = currentMoveSpd * (1 + dashingFrames / 12.0); ///////////////////////////////////////////////////////////////
@@ -96,7 +102,6 @@ public:
                         if (dirFacing == 1)
                         {
                             speed_x = dashDistance / sqrt(2);
-
                             lastKeyPressed = 1;
                         }
                         else
@@ -137,7 +142,6 @@ public:
                     }
                     if (!IsKeyDown(KEY_D))
                     {
-
                         dirFacing = 0;
                     }
                 }
@@ -149,6 +153,7 @@ public:
             }
             else if (IsKeyDown(KEY_S))
             {
+                cout << "key s procced" << endl;
                 if (IsKeyDown(KEY_D))
                 {
                     if (!IsKeyDown(KEY_W))
@@ -202,8 +207,23 @@ public:
                 }
                 else if (!IsKeyDown(KEY_W))
                 {
-                    lastKeyPressed = KEY_S;
-                    speed_y = -dashDistance;
+                    if (!airborne)
+                    {
+                        if (dirFacing == 1)
+                        {
+                            speed_x = dashDistance;
+                        }
+                        else
+                        {
+                            speed_x = -dashDistance;
+                        }
+                    }
+                    else
+                    {
+
+                        lastKeyPressed = KEY_S;
+                        speed_y = -dashDistance;
+                    }
                 }
             }
             else if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
@@ -278,8 +298,8 @@ public:
 
         // jump functionality
         if (IsKeyDown(KEY_SPACE) && (!airborne || jumpingFrames > 0)) // when space is held, they will go upwards if on the ground (!airborne) or they are able to still go up (jumpingFrames > 0)
-        {     
-            if (!airborne)    
+        {
+            if (!airborne)
             {
                 jumpingFrames = 30;
                 airborne = true;

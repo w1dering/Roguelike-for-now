@@ -52,8 +52,8 @@ int main()
             platforms[i].collision(player);
             if (player.airborne)
             {
-                player.airborne = !(player.y == platforms[i].platform.y - player.height / 2.0 || 
-                player.y == platforms[i].platform.y + 2 - player.height / 2.0 );
+                player.airborne = !(player.y >= platforms[i].platform.y - player.height / 2.0 && 
+                player.y <= platforms[i].platform.y + 2 - player.height / 2.0 );
             }
             
             DrawRectangle(platforms[i].platform.x, platforms[i].platform.y, platforms[i].platform.width, platforms[i].platform.height, WHITE); // draw platform

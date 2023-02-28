@@ -19,11 +19,14 @@ public:
     void collision(Player &player)
     {
         Vector2 prevPos{player.x - player.speed_x, player.y - -player.speed_y};
+
+        // debugging (will likely need later on)
         // cout << "\n\nprevPos: " << prevPos.x << ", " << prevPos.y << ", " << player.width << ", " << player.height << endl;
         // cout << "prevPos top left: " << prevPos.x - player.width / (float) 2.0 << ", " << player.y - player.height / (float) 2.0 << endl;
         // cout << "\nplayer: " << player.x << ", " << player.y << ", speeds: " << player.speed_x << ", " << player.speed_y << endl;
         // cout << "player top left: " << player.x - player.width / (float) 2.0 << ", " << player.y - player.height / (float) 2.0 << endl;
         // cout << "platform: " << platform.x << ", " << platform.y << ", " << platform.width << ", " << platform.height << endl;
+
         if ( CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float) 2.0, player.y - player.height / (float) 2.0, player.width, player.height},
                                 Rectangle{platform.x, platform.y, platform.width, platform.height}) &&
             !CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float) 2.0, prevPos.y - player.height / (float) 2.0, player.width, player.height},
