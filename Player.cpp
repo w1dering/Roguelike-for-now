@@ -73,7 +73,7 @@ public:
             speed_y = 0;
             framesFalling = 0;
             jumpingFrames = 0;
-            float dashDistance = currentMoveSpd * (1 + dashingFrames / 5.0);
+            float dashDistance = currentMoveSpd * (1 + dashingFrames / 12.0); ///////////////////////////////////////////////////////////////
             if (((IsKeyDown(KEY_W) && IsKeyDown(KEY_S)) || (!IsKeyDown(KEY_W) && !IsKeyDown(KEY_S))) &&
                 ((IsKeyDown(KEY_A) && IsKeyDown(KEY_D)) || (!IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))))
             {
@@ -290,11 +290,11 @@ public:
             }
             if (speed_y == 0 && !dashing)
             {
-                speed_y = 8.8;
+                speed_y = 6.525;
             }
             else
             {
-                speed_y -= 0.02 * (30.0 - jumpingFrames);
+                speed_y -= 0.015 * (30.0 - jumpingFrames);
             }
         }
         else if (airborne && jumpingFrames > 0)
@@ -329,8 +329,8 @@ public:
         {
             for (int c = 0; c < 3; c++)
             {
-                hitbox[r][c].x = (x - width / 2.0) + (width / 2.0) * r;
-                hitbox[r][c].y = (y - height / 2.0) + (height / 2.0) * c;
+                hitbox[r][c].x = x + (width / 2.0) * (c - 1);
+                hitbox[r][c].y = y + (height / 2.0) * (r - 1);
             }
         }
     }

@@ -18,23 +18,40 @@ int main()
     // Player player
     // move below to player.cpp class
     Player player;
-    player.x = 100;
-    player.y = 100;
+    player.x = 50;
+    player.y = 530;
 
     // Platform platform1
     // move below to platform.cpp class (eventually)
+    vector<Platform> platforms;
     Platform ground(0, screenHeight - 50, screenWidth + 50, 50);
+    Platform plat1(0, 100, 100, 50);
+    Platform plat2(0, 250, 100, 50);
+    Platform plat3(0, 400, 100, 50);
+    Platform plat4(0, 500, 100, 50);
 
     InitWindow(screenWidth, screenHeight, "Roguelike for now");
     SetTargetFPS(60);
+
+    platforms.push_back(ground);
+    platforms.push_back(plat1);
+    platforms.push_back(plat2);
+    platforms.push_back(plat3);
+    platforms.push_back(plat4);
 
     while (WindowShouldClose() == false)
     {
         BeginDrawing();
         ClearBackground(BLACK);
 
+        player.airborne = true;
+        for (int i = 0; i < (int)platforms.size(); i++)
+        {
+            platforms[i].collision(player);
+            DrawRectangle(platforms[i].platform.x, platforms[i].platform.y, platforms[i].platform.width, platforms[i].platform.height, WHITE); // draw platform
+        }
+
         player.move(player.x, player.y);
-        ground.collision(player);
 
         // doesn't let the ball go out of bounds
         if (player.x >= screenWidth - player.width / 2.0)
@@ -53,11 +70,11 @@ int main()
                 player.dashTrail[0].z = 180;
             }
 
-            for (int i = 0; i < (int) player.dashTrail.size(); i++)
+            for (int i = 0; i < (int)player.dashTrail.size(); i++)
             {
                 if (player.dashTrail[i].z > 0)
                 {
-                    Color shadowColor{102, 191, 255, (unsigned char) player.dashTrail[i].z};
+                    Color shadowColor{102, 191, 255, (unsigned char)player.dashTrail[i].z};
                     DrawCircle(player.dashTrail[i].x, player.dashTrail[i].y, player.width / 2.0, shadowColor);
                     player.dashTrail[i].z -= 5;
                 }
@@ -75,8 +92,6 @@ int main()
             }
         }
 
-        DrawRectangle(ground.platform.x, ground.platform.y, ground.platform.width, ground.platform.height, WHITE); // draw platform
-
         if (player.dashes > 0)
         {
             DrawCircle(player.x, player.y, player.width / 2.0, SKYBLUE); // sky blue ring around player to indicate they have a dash
@@ -85,6 +100,19 @@ int main()
         else
         {
             DrawCircle(player.x, player.y, player.width / 2.0, player.playerColor);
+        }
+
+        if (player.airborne)
+        {
+            DrawCircle(600, 400, 15, RED);
+        }
+
+        for (int r = 0; r < 3; r++)
+        {
+            for (int c = 0; c < 3; c++)
+            {
+                DrawCircle(player.hitbox[r][c].x, player.hitbox[r][c].y, 5, RED);
+            }
         }
 
         EndDrawing();
