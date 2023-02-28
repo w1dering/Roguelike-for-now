@@ -18,8 +18,8 @@ int main()
     // Player player
     // move below to player.cpp class
     Player player;
-    player.x = 50;
-    player.y = 530;
+    player.x = 500;
+    player.y = 500;
 
     // Platform platform1
     // move below to platform.cpp class (eventually)
@@ -44,14 +44,20 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
+        player.move(player.x, player.y);
         player.airborne = true;
+
         for (int i = 0; i < (int)platforms.size(); i++)
         {
             platforms[i].collision(player);
+            if (player.airborne)
+            {
+                player.airborne = !(player.y == platforms[i].platform.y - player.height / 2.0 || 
+                player.y == platforms[i].platform.y + 2 - player.height / 2.0 );
+            }
+            
             DrawRectangle(platforms[i].platform.x, platforms[i].platform.y, platforms[i].platform.width, platforms[i].platform.height, WHITE); // draw platform
         }
-
-        player.move(player.x, player.y);
 
         // doesn't let the ball go out of bounds
         if (player.x >= screenWidth - player.width / 2.0)

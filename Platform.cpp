@@ -18,52 +18,55 @@ public:
 
     void collision(Player &player)
     {
-        // player bottom, platform top checker
-        cout << "player: " << player.x << ", " << player.y << endl;
-        cout << "platform: " << platform.x << ", " << platform.y << ", " << platform.width << ", " << platform.height << endl;
-        if (player.hitbox[2][0].y >= platform.y && 
-            player.hitbox[2][0].y <= platform.y + platform.height &&
-            player.hitbox[0][2].x >= platform.x &&
-            player.hitbox[0][0].x <= platform.x + platform.width)
+        Vector2 prevPos{player.x - player.speed_x, player.y - -player.speed_y};
+        // cout << "\n\nprevPos: " << prevPos.x << ", " << prevPos.y << ", " << player.width << ", " << player.height << endl;
+        // cout << "prevPos top left: " << prevPos.x - player.width / (float) 2.0 << ", " << player.y - player.height / (float) 2.0 << endl;
+        // cout << "\nplayer: " << player.x << ", " << player.y << ", speeds: " << player.speed_x << ", " << player.speed_y << endl;
+        // cout << "player top left: " << player.x - player.width / (float) 2.0 << ", " << player.y - player.height / (float) 2.0 << endl;
+        // cout << "platform: " << platform.x << ", " << platform.y << ", " << platform.width << ", " << platform.height << endl;
+        if ( CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float) 2.0, player.y - player.height / (float) 2.0, player.width, player.height},
+                                Rectangle{platform.x, platform.y, platform.width, platform.height}) &&
+            !CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float) 2.0, prevPos.y - player.height / (float) 2.0, player.width, player.height},
+                                Rectangle{platform.x, platform.y, platform.width, platform.height}))
         {
-            player.y = platform.y - player.height / 2.0 + 1;
-            player.framesFalling = 0;
-            if (player.speed_y < 0)
+            // player bottom, platform top checker
+            if (player.y > prevPos.y)
             {
-                player.speed_y = 0;
+                player.y = platform.y - player.height / 2.0;
+                player.framesFalling = 0;
+                player.speed_y = -2; // to ensure collision still occurs, as the box needs to be moving to check
+                player.jumpingFrames = 0;
+                player.airborne = false;
+                player.dashes = player.maxDashes;
+                // cout << "player bottom collide" << endl;
             }
-            player.jumpingFrames = 0;
-            player.airborne = false;
-            player.dashes = player.maxDashes;
-            cout << "player bottom collide" << endl;
-        }
-        else if (player.y - player.height / 2.0 == platform.y + platform.height && 
-                player.x + player.width / 2.0 != platform.x && 
-                player.x - player.width / 2.0 != platform.x + platform.width && 
-                (CheckCollisionPointRec(player.hitbox[0][0], platform) || // player top, platform bottom collision
-                CheckCollisionPointRec(player.hitbox[0][1], platform) || CheckCollisionPointRec(player.hitbox[0][2], platform)))
-        {
-            player.y = platform.y + platform.height + player.height / 2.0;
-            if (player.speed_y > 0)
+            // player top, platform bottom checker
+            else
             {
+                player.y = platform.y + platform.height + player.height / 2.0;
                 player.speed_y = 0;
+                cout << "player top collide" << endl;
             }
         }
-        else if (player.x - player.width / 2.0 == platform.x && player.y + player.height / 2.0 != platform.y && player.y - player.height / 2.0 != platform.y + platform.height && (CheckCollisionPointRec(player.hitbox[0][0], platform) || // player left, platform right collision
-                                                                                                                                                                                   CheckCollisionPointRec(player.hitbox[1][0], platform) || CheckCollisionPointRec(player.hitbox[2][0], platform)))
+        // player left, platform right checker
+        else if (CheckCollisionRecs(Rectangle{player.x - player.width / (float) 2.0, prevPos.y - player.height / (float) 2.0, player.width, player.height},
+                               Rectangle{platform.x, platform.y, platform.width, platform.height}) &&
+            !CheckCollisionRecs(Rectangle{prevPos.x - player.width / (float) 2.0, prevPos.y - player.height / (float) 2.0, player.width, player.height},
+                                Rectangle{platform.x, platform.y, platform.width, platform.height}))
         {
-            player.x = platform.x + platform.width + player.width / 2.0;
-            player.speed_x = 0;
-        }
-        else if (player.x + player.width / 2.0 == platform.x + platform.width && player.y + player.height / 2.0 != platform.y && player.y - player.height / 2.0 != platform.y + platform.height && (CheckCollisionPointRec(player.hitbox[0][2], platform) || // player right, platform left collision
-                                                                                                                                                                                                    CheckCollisionPointRec(player.hitbox[1][2], platform) || CheckCollisionPointRec(player.hitbox[2][2], platform)))
-        {
-            player.x = platform.x - player.width / 2.0;
-            player.speed_x = 0;
-        }
-        else
-        {
-            cout << "player is airborne" << endl;
+            // player right, platform left checker
+            if (player.x > prevPos.x)
+            {
+                player.x = platform.x - player.width / 2.0;
+                player.speed_x = 0;
+                cout << "player right collide" << endl;
+            }
+            else
+            {
+                player.x = platform.x + platform.width + player.width / 2.0;
+                player.speed_x = 0;
+                cout << "player left collide" << endl;
+            }
         }
     }
 };

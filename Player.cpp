@@ -278,11 +278,12 @@ public:
 
         // jump functionality
         if (IsKeyDown(KEY_SPACE) && (!airborne || jumpingFrames > 0)) // when space is held, they will go upwards if on the ground (!airborne) or they are able to still go up (jumpingFrames > 0)
-        {                                                             // add checker for float jump once u code that in
-            if (!airborne)
+        {     
+            if (!airborne)    
             {
                 jumpingFrames = 30;
                 airborne = true;
+                speed_y += 2.0; // must be the same as initial falling speed in platform.cpp
             }
             else
             {
