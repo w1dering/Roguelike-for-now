@@ -24,7 +24,7 @@ public:
     float maxMoveSpd = 5;
     float speed_x = 0;
     float speed_y = 0;
-    const float terminalVelocity = -12.5; // max falling speed of player
+    const float terminalVelocity = -10; // max falling speed of player
     float currentMoveSpd;
     int framesFalling = 0;
 
@@ -56,6 +56,17 @@ public:
 
     void move(float &x, float &y)
     {
+        // checks the net direction the player wants to move
+        // 1 is right/up
+        // 0 is both held or none held
+        // -1 is left/down
+        int netDir_x = IsKeyDown(KEY_D) - IsKeyDown(KEY_A);
+        int netDir_y = IsKeyDown(KEY_W) - IsKeyDown(KEY_S);
+        if (netDir_x != 0) // if netDir_x is 0, dir facing should stay the same
+        {
+            dirFacing = netDir_x; // if netDir_x is not 0, dir facing is where you're going
+        }
+
         speed_x = 0;
         // walk key
         currentMoveSpd = (IsKeyDown(KEY_LEFT_CONTROL)) ? (0.5 * maxMoveSpd) : (maxMoveSpd);
@@ -78,130 +89,54 @@ public:
             jumpingFrames = 0;
 
             float dashDistance = currentMoveSpd * (1 + dashingFrames / 12.0); ///////////////////////////////////////////////////////////////
-            
-            if (IsKeyDown(KEY_W) == IsKeyDown(KEY_S) && IsKeyDown(KEY_A) == IsKeyDown(KEY_D)) // if both are pressed or neither pressed, the player is not moving
+
+            if (netDir_x == 0 && netDir_y == 0) // if both are pressed or neither pressed, the player is not moving
             {
                 speed_x = dirFacing * dashDistance;
             }
-            else if (IsKeyDown(KEY_W))
+            else if (netDir_x == 0 && netDir_y == 1) // straight up
             {
-                if (IsKeyDown(KEY_D))
-                {
-                    if (!IsKeyDown(KEY_S))
-                    {
-                        speed_x = dirFacing * dashDistance / sqrt(2); // dash diagonally up and whatever direction you're facing
-                        speed_y = dashDistance / sqrt(2);
-                        if (dirFacing == 1)
-                        {
-                            lastKeyPressed = 1; // lastKeyPressed is pointing to the top right
-                        }
-                    }
-                    else
-                    {
-                        speed_x = dashDistance; // if holding W, S and D, W/S cancel out and dash in direction of D
-                        lastKeyPressed = KEY_D;
-                    }
-
-                    if (!IsKeyDown(KEY_A))
-                    {
-                        dirFacing = 1; // changing direction facing
-                    }
-                }
-                else if (IsKeyDown(KEY_A))
-                {
-                    if (!IsKeyDown(KEY_S))
-                    {
-                        speed_x = dirFacing * dashDistance / sqrt(2);
-                        speed_y = dashDistance / sqrt(2);
-
-                        if (dirFacing == -1)
-                        {
-                            lastKeyPressed = 2;
-                        }
-                    }
-                    else
-                    {
-                        speed_x = -dashDistance; // if holding W, S and A, W/S cancel out and dash in direction of A
-                        lastKeyPressed = KEY_A;
-                    }
-                    if (!IsKeyDown(KEY_D))
-                    {
-                        dirFacing = -1;
-                    }
-                }
-                else if (!IsKeyDown(KEY_S))
-                {
-                    speed_y = dashDistance;
-                    lastKeyPressed = KEY_W;
-                }
+                speed_y = dashDistance;
+                lastKeyPressed = KEY_W;
             }
-            else if (IsKeyDown(KEY_S))
+            else if (netDir_x == 0 && netDir_y == -1) // straight down
             {
-                if (IsKeyDown(KEY_D))
-                {
-                    if (!IsKeyDown(KEY_W))
-                    {
-                        speed_x = dirFacing * dashDistance / sqrt(2);
-                        speed_y = -dashDistance / sqrt(2);
-
-                        if (dirFacing == 1)
-                        {
-                            lastKeyPressed = 4;
-                        }
-                    }
-                    else
-                    {
-                        speed_x = dashDistance;
-                        lastKeyPressed = KEY_D;
-                    }
-                    if (!IsKeyDown(KEY_A))
-                    {
-                        dirFacing = 1;
-                    }
-                }
-                else if (IsKeyDown(KEY_A))
-                {
-                    if (!IsKeyDown(KEY_W))
-                    {
-                        speed_x = dirFacing * dashDistance / sqrt(2);
-                        speed_y = -dashDistance / sqrt(2);
-                        if (dirFacing == -1)
-                        {
-                            lastKeyPressed = 3;
-                        }
-                    }
-                    else
-                    {
-                        speed_x = -dashDistance;
-                        lastKeyPressed = KEY_A;
-                    }
-                    if (!IsKeyDown(KEY_D))
-                    {
-                        dirFacing = -1;
-                    }
-                }
-                else if (!IsKeyDown(KEY_W))
-                {
-                    if (!airborne)
-                    {
-                        speed_x = dirFacing * dashDistance; // if on ground and holding ONLY s, dash forwards
-                    }
-                    else
-                    {
-                        lastKeyPressed = KEY_S; // if airborne and holding ONLY s, dash straight down
-                        speed_y = -dashDistance;
-                    }
-                }
+                speed_y = -dashDistance;
+                lastKeyPressed = KEY_S;
             }
-            else if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
+            else if (netDir_x == 1 && netDir_y == 0) // straight right
             {
                 speed_x = dashDistance;
-                dirFacing = 1;
+                lastKeyPressed = KEY_D;
             }
-            else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
+            else if (netDir_x == 1 && netDir_y == 1) // up right
+            {
+                speed_x = dashDistance / sqrt(2);
+                speed_y = dashDistance / sqrt(2);
+                lastKeyPressed = 1; // quadrant 1
+            }
+            else if (netDir_x == 1 && netDir_y == -1) // down right
+            {
+                speed_x = dashDistance / sqrt(2);
+                speed_y = -dashDistance / sqrt(2);
+                lastKeyPressed = 4; // quadrant 4
+            }
+            else if (netDir_x == -1 && netDir_y == 0) // straight left
             {
                 speed_x = -dashDistance;
-                dirFacing = -1;
+                lastKeyPressed = KEY_A;
+            }
+            else if (netDir_x == -1 && netDir_y == 1) // up left
+            {
+                speed_x = -dashDistance / sqrt(2);
+                speed_y = dashDistance / sqrt(2);
+                lastKeyPressed = 2; // quadrant 2
+            }
+            else if (netDir_x == -1 && netDir_y == -1) // down left
+            {
+                speed_x = -dashDistance / sqrt(2);
+                speed_y = -dashDistance / sqrt(2);
+                lastKeyPressed = 3; // quadrant 3
             }
             else if (lastKeyPressed == KEY_W)
             {
@@ -251,13 +186,11 @@ public:
             {
                 speed_x = currentMoveSpd;
                 lastKeyPressed = KEY_D;
-                dirFacing = 1;
             }
             else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
             {
                 speed_x = -currentMoveSpd;
                 lastKeyPressed = KEY_A;
-                dirFacing = -1;
             }
             else if (IsKeyDown(KEY_W) == IsKeyDown(KEY_S) && IsKeyDown(KEY_A) == IsKeyDown(KEY_D))
             {
