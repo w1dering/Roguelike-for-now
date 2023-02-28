@@ -1,7 +1,6 @@
 #include <raylib.h>
 #include <tgmath.h>
 #include <vector>
-#include <Particle.cpp>
 #include <iostream>
 
 using namespace std;
