@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <Platform.cpp>
+#include <Weapons\Bow.cpp>
 
 using namespace std;
 
@@ -20,6 +21,9 @@ int main()
     Player player;
     player.x = 500;
     player.y = 500;
+
+    // Bow
+    Bow bow;
 
     // Platform platform1
     // move below to platform.cpp class (eventually)
@@ -96,6 +100,17 @@ int main()
                     }
                 }
             }
+        }
+
+        // Bow primary fire
+        if (IsMouseButtonDown(0)) { // primary fire charging
+            bow.charge(player.x, player.y, GetMousePosition());
+            Vector2 tempPlayerPos{player.x, player.y};
+            DrawLineEx(tempPlayerPos, bow.indicator, 10, Fade(WHITE, bow.chargePower/90));
+        }
+        if (IsMouseButtonReleased(0) && bow.chargePower>=30) { // primary fire released
+            bow.chargePower = 0;
+            
         }
 
         if (player.dashes > 0)
