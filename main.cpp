@@ -1,12 +1,13 @@
 #include <iostream>
-#include <raylib.h>
+#include "raylib.h"
 #include <tgmath.h>
 #include <ctime>
 #include <iostream>
 #include <vector>
 
-#include <Platform.cpp>
-#include <Weapons\Bow.cpp>
+#include "Player/Player.h"
+#include "Obstacles/Platform.h"
+#include "Weapons/Bow.h"
 
 using namespace std;
 
@@ -16,8 +17,7 @@ int main()
     const int screenWidth = 800;
     const int screenHeight = 600;
 
-    // Player player
-    // move below to player.cpp class
+    // Player
     Player player;
     player.x = 500;
     player.y = 500;
@@ -25,7 +25,7 @@ int main()
     // Bow
     Bow bow;
 
-    // Platform platform1
+    // Platform
     // move below to platform.cpp class (eventually)
     vector<Platform> platforms;
     Platform ground(0, screenHeight - 50, screenWidth + 50, 50);
@@ -112,21 +112,23 @@ int main()
         }
 
         // Bow primary fire
-        if (IsMouseButtonDown(0) && bow.travelDistance == 0)
-        { // primary fire charging
-            bow.charge(player.x, player.y, GetMousePosition());
-            Vector2 tempPlayerPos{player.x, player.y};
-            DrawLineEx(tempPlayerPos, bow.indicator, 10, Fade(WHITE, bow.chargeFrames / 60));
-        } else if (IsMouseButtonReleased(0))
-        { // primary fire released
-            bow.arrow.x = player.x;
-            bow.arrow.y = player.y;
-            bow.aimPositionX = (int) GetMouseX;
-            bow.aimPositionY = (int) GetMouseY;
-            bow.travelDistance = 30;
-            bow.chargePower = bow.chargeFrames;
-            bow.chargeFrames = 0;
-            std::cout << bow.chargePower << endl;
+        if (bow.travelDistance == 0) // ensures there isn't already an arrow when trying to fire
+        {
+            if (IsMouseButtonDown(0))
+            { // primary fire charging
+                bow.charge(player.x, player.y, GetMousePosition());
+                DrawLineEx(Vector2{player.x, player.y}, bow.indicator, 10, Fade(WHITE, bow.chargeFrames / 60));
+            }
+            else if (IsMouseButtonReleased(0))
+            { // primary fire released
+                bow.arrow.x = player.x;
+                bow.arrow.y = player.y;
+                bow.aimPositionX = (int)GetMousePosition().x;
+                bow.aimPositionY = (int)GetMousePosition().y;
+                bow.travelDistance = 30;
+                bow.chargePower = bow.chargeFrames;
+                bow.chargeFrames = 0;
+            }
         }
         if (bow.travelDistance > 0)
         { // arrow go nyoooooooooooooom
@@ -134,7 +136,6 @@ int main()
             bow.travelDistance--;
             DrawCircle(bow.arrow.x, bow.arrow.y, 10, WHITE);
         }
-        
 
         if (player.dashes > 0)
         {
