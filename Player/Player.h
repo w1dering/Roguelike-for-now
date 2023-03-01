@@ -22,6 +22,8 @@ public:
 
     // player movement
     float maxMoveSpd = 5;
+    float framesToAccelerate = 5;
+    float framesAccelerated = 0;
     float speed_x = 0;
     float speed_y = 0;
     const float terminalVelocity = -10; // max falling speed of player

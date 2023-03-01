@@ -14,6 +14,8 @@ public:
     double aimAngle = 0;
     int aimPositionX = 0;
     int aimPositionY = 0;
+    int playerPositionX = 0;
+    int playerPositionY = 0;
     Vector2 arrow;
     int travelDistance = 30;
 

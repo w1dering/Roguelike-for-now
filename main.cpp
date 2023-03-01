@@ -1,7 +1,6 @@
 #include <iostream>
 #include "raylib.h"
 #include <tgmath.h>
-#include <ctime>
 #include <iostream>
 #include <vector>
 
@@ -125,6 +124,8 @@ int main()
                 bow.arrow.y = player.y;
                 bow.aimPositionX = (int)GetMousePosition().x;
                 bow.aimPositionY = (int)GetMousePosition().y;
+                bow.playerPositionX = player.x;
+                bow.playerPositionY = player.y;
                 bow.travelDistance = 30;
                 bow.chargePower = bow.chargeFrames;
                 bow.chargeFrames = 0;
@@ -132,7 +133,7 @@ int main()
         }
         if (bow.travelDistance > 0)
         { // arrow go nyoooooooooooooom
-            bow.fire(player.x, player.y, bow.aimAngle);
+            bow.fire(bow.playerPositionX, bow.playerPositionY, bow.aimAngle);
             bow.travelDistance--;
             DrawCircle(bow.arrow.x, bow.arrow.y, 10, WHITE);
         }
@@ -147,21 +148,11 @@ int main()
             DrawCircle(player.x, player.y, player.width / 2.0, player.playerColor);
         }
 
-        if (player.airborne)
-        {
-            DrawCircle(600, 400, 15, RED);
-        }
-
-        for (int r = 0; r < 3; r++)
-        {
-            for (int c = 0; c < 3; c++)
-            {
-                DrawCircle(player.hitbox[r][c].x, player.hitbox[r][c].y, 5, RED);
-            }
-        }
+        cout << player.speed_y << endl;
 
         EndDrawing();
     }
+
     CloseWindow();
     return 0;
 }

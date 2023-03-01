@@ -134,23 +134,36 @@ void Player::move(float &x, float &y)
             dashing = false;
         }
     }
-    else
+    else // not dashing
     {
         if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
         {
-            speed_x = currentMoveSpd;
+            if (framesAccelerated != framesToAccelerate)
+            {
+                framesAccelerated++;
+            }
             lastKeyPressed = KEY_D;
         }
         else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
         {
-            speed_x = -currentMoveSpd;
+            if (framesAccelerated != -framesToAccelerate)
+            {
+                framesAccelerated--;
+            }
             lastKeyPressed = KEY_A;
         }
         else if (IsKeyDown(KEY_W) == IsKeyDown(KEY_S) && IsKeyDown(KEY_A) == IsKeyDown(KEY_D))
         {
-            speed_x = 0;
+            if (framesAccelerated > 0)
+            {
+                framesAccelerated --;
+            } 
+            else if (framesAccelerated < 0)
+            {
+                framesAccelerated ++;
+            }
         }
-
+        speed_x = framesAccelerated * currentMoveSpd / framesToAccelerate;
         if (IsKeyPressed(KEY_J))
         {
             if (swordSwingFrames == -1)
@@ -165,7 +178,7 @@ void Player::move(float &x, float &y)
     }
 
     // jump functionality
-    if (IsKeyPressed(KEY_SPACE) && !airborne) // when space is held, they will go upwards if on the ground (!airborne) or they are able to still go up (jumpingFrames > 0)
+    if (IsKeyPressed(KEY_SPACE) && !airborne) // pressed jump on ground to start jump
     {
         jumpingFrames = 30;
         airborne = true;
@@ -176,23 +189,23 @@ void Player::move(float &x, float &y)
             speed_y = 6.525;
         }
     }
-    else if (IsKeyDown(KEY_SPACE) && jumpingFrames > 0)
+    else if (IsKeyDown(KEY_SPACE) && jumpingFrames > 0) // holding jump to increase height
     {
         jumpingFrames--;
         speed_y -= 0.015 * (30.0 - jumpingFrames);
     }
     else if (airborne && jumpingFrames > 0)
     {
-        speed_y = 1.5;
-        jumpingFrames = 0;
+        speed_y /= 2.5;
+        jumpingFrames = 0; 
         framesFalling = 0;
     }
     else if (airborne && !dashing)
     {
-        if (speed_y > 0)
-        {
-            speed_y = 0;
-        }
+        // if (speed_y > 0)
+        // {
+        //     speed_y = 0;
+        // }
         speed_y -= 0.05 * framesFalling;
         if (speed_y < terminalVelocity) // less than because terminal velocity is negative
         {

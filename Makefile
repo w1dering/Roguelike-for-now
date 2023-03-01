@@ -1,2 +1,2 @@
 default:
-	g++ main.cpp Obstacles/Platform.cpp Player/Player.cpp Weapons/Bow.cpp -o test.exe -O2 -Wall -Wno-missing-braces -I include/ -L lib/ -lraylib -lopengl32 -lgdi32 -lwinmm
+	g++ main.cpp Obstacles/Platform.cpp Player/Player.cpp Weapons/Bow.cpp Weapons/Sword.cpp -o Roguelike_for_now.exe -O2 -Wall -Wno-missing-braces -I include/ -L lib/ -lraylib -lopengl32 -lgdi32 -lwinmm
