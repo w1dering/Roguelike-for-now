@@ -148,7 +148,6 @@ int main()
             DrawCircle(player.x, player.y, player.width / 2.0, player.playerColor);
         }
 
-        cout << player.speed_y << endl;
 
         EndDrawing();
     }
