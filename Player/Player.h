@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 
+using namespace std;
+
 class Player
 {
 public:
@@ -26,6 +28,8 @@ public:
     float framesAccelerated = 0;
     float speed_x = 0;
     float speed_y = 0;
+    float speed_x_outside = 0;
+    float speed_y_outside = 0;
     const float terminalVelocity = -10; // max falling speed of player
     float currentMoveSpd;
     int framesFalling = 0;
@@ -35,7 +39,7 @@ public:
     bool airborne = true;
 
     // player dashing
-    int lastKeyPressed; // used to determine dash direction if player is mid-dash and lets go of controls
+    int lastKeyPressed = KEY_D; // used to determine dash direction if player is mid-dash and lets go of controls
     int dirFacing = 1;  // 1 is right, -1 is left
     int dashingFrames = -1;
     bool dashing = false;
@@ -54,6 +58,6 @@ public:
 
     Player() {}
 
-    void move(float &x, float &y);
+    void move();
 };
 #endif

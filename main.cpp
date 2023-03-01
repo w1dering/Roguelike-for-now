@@ -28,13 +28,13 @@ int main()
     // move below to platform.cpp class (eventually)
     vector<Platform> platforms;
     Platform ground(0, screenHeight - 50, screenWidth + 50, 50);
-    Platform plat1(0, 100, 100, 50);
+    Platform plat1(0, 500, 100, 50);
     Platform plat2(0, 250, 100, 50);
-    Platform plat3(0, 400, 100, 50);
-    Platform plat4(0, 500, 100, 50);
+    Platform plat3(0, 400, 100, 50, {Vector3{0.2, 0.1, 10}, Vector3{0, 0, 40}, Vector3{-0.2, -0.1, 20}, Vector3{0, 0, 40}, Vector3{0.2, 0.1, 10}});
+    Platform plat4(0, 100, 100, 50, {Vector3{0.5, 0, 3}, Vector3{0, 0, 54}, Vector3{-0.5, 0, 6}, Vector3{0, 0, 54}, Vector3{0.5, 0, 3}});
 
     InitWindow(screenWidth, screenHeight, "Roguelike for now");
-    SetTargetFPS(60);
+    SetTargetFPS(15);
 
     platforms.push_back(ground);
     platforms.push_back(plat1);
@@ -46,19 +46,25 @@ int main()
     {
         BeginDrawing();
         ClearBackground(BLACK);
+ 
+        for (int i = 0; i < (int)platforms.size(); i++)
+        {
+            platforms[i].movePlatform();
+        }
 
-        player.move(player.x, player.y);
+        player.move();
         player.airborne = true;
 
         for (int i = 0; i < (int)platforms.size(); i++)
         {
+            // platforms[i].movePlatform();
             platforms[i].collision(player);
             if (player.airborne)
             {
-                player.airborne = !(player.y >= platforms[i].platform.y - player.height / 2.0 &&
-                                    player.y <= platforms[i].platform.y + 2 - player.height / 2.0);
+                player.airborne = !(player.y >= platforms[i].dimensions.y - player.height / 2.0 &&
+                                    player.y <= platforms[i].dimensions.y + 2 - player.height / 2.0);
             }
-            DrawRectangle(platforms[i].platform.x, platforms[i].platform.y, platforms[i].platform.width, platforms[i].platform.height, WHITE); // draw platform
+            DrawRectangle(platforms[i].dimensions.x, platforms[i].dimensions.y, platforms[i].dimensions.width, platforms[i].dimensions.height, WHITE); // draw platform
         }
 
         // doesn't let the ball go out of bounds
@@ -148,6 +154,10 @@ int main()
             DrawCircle(player.x, player.y, player.width / 2.0, player.playerColor);
         }
 
+
+        // rendering hp
+        // DrawRectangle(10, 10, (screenWidth / 2.0) - 20, 80, BLACK);
+        DrawRectangle(20, 20, (player.hp / player.maxHp * screenWidth / 2.0) - 40, 20, GREEN);
 
         EndDrawing();
     }
