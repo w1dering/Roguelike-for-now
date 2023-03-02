@@ -83,13 +83,13 @@ int main()
             }
             // DrawRectangle(platforms[i].effectiveRectangle.x, platforms[i].effectiveRectangle.y, platforms[i].effectiveRectangle.width, platforms[i].effectiveRectangle.height, YELLOW);
 
-            if (i == (int) platforms.size() - 1)
-            {
-                player.prev_x = player.x;
-                player.prev_y = player.y;
-                cout << "prev_x TL updated to " << (player.prev_x - player.width / 2.0) << endl;
-                cout << "prev_y TL updated to " << (player.prev_y - player.height / 2.0) << endl;
-            }
+            // if (i == (int) platforms.size() - 1)
+            // {
+            //     player.prev_x = player.x;
+            //     player.prev_y = player.y;
+            //     cout << "prev_x TL updated to " << (player.prev_x - player.width / 2.0) << endl;
+            //     cout << "prev_y TL updated to " << (player.prev_y - player.height / 2.0) << endl;
+            // }
 
             DrawRectangle(platforms[i].dimensions.x, platforms[i].dimensions.y, platforms[i].dimensions.width, platforms[i].dimensions.height, WHITE); // draw platform
         }
