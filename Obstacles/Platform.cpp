@@ -67,7 +67,7 @@ void Platform::collision(Player &player)
         }
         else
         {
-            cout << "colliding not in a region" << endl;
+            cout << "colliding not in a region - probably clipped into platform" << endl;
         }
     }
 }

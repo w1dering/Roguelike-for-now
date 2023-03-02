@@ -52,7 +52,7 @@ int main()
         {
             if (!thFps)
             {
-                SetTargetFPS(30);
+                SetTargetFPS(60);
                 thFps = true;
             }
             else
