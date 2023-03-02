@@ -1,52 +1,60 @@
+/*
 #include <raylib.h>
 #include <iostream>
 
 #include "Platform.h"
-#include "Trapezoid.h"
 
 void Platform::collision(Player &player)
 {
-    Vector2 boundTL{dimensions.x - player.width / (float)2.0, dimensions.y - player.height / (float)2.0};
-    Vector2 boundTR{dimensions.x + dimensions.width + player.width / (float)2.0, dimensions.y - player.height / (float)2.0};
-    Vector2 boundBL{dimensions.x - player.width / (float)2.0, dimensions.y + dimensions.height + player.height / (float)2.0};
-    Vector2 boundBR{dimensions.x + dimensions.width + player.width / (float)2.0, dimensions.y + dimensions.height + player.height / (float)2.0};
-
-    Vector2 platTL{dimensions.x, dimensions.y};
-    Vector2 platTR{dimensions.x + dimensions.width, dimensions.y};
-    Vector2 platBL{dimensions.x, dimensions.y + dimensions.height};
-    Vector2 platBR{dimensions.x + dimensions.width, dimensions.y + dimensions.height};
-
-    Trapezoid topRegion{boundTL, boundTR, platTL, platTR, 2};
-    Trapezoid leftRegion{boundTL, platTL, boundBL, platBL, 3};
-    Trapezoid botRegion{platBL, platBR, boundBL, boundBR, 0};
-    Trapezoid rightRegion{platTR, boundTR, platBR, boundBR, 1};
-    Vector2 point{player.x, player.y};
-
-    // credits:
-    // programming: hailey lyn
-    // design: hailey lyn
-    // coolness: hailey lyn
-
     if (CheckCollisionRecs(Rectangle{player.x - (player.width / (float)2.0), player.y - (player.height / (float)2.0), player.width, player.height},
-                           Rectangle{dimensions.x, dimensions.y, dimensions.width, dimensions.height}))
+                           Rectangle{dimensions.x, dimensions.y, dimensions.width, dimensions.height})) // checks if boxes are colliding
     {
-        if (botRegion.isPointIn(point)) // player's top
+        float min = abs(player.y + player.height / 2.0 - dimensions.y);
+        cout << "dist bot = " << min << endl;
+        
+        int minDir = 0; // 0 is player's bottom, 1 is left, 2 is top, 3 is right
+
+        float left = abs(player.x - player.width / 2.0 - (dimensions.x + dimensions.width));
+        cout << "dist left = -------------------------------------------" << left << endl;
+        if (left < min)
         {
+            min = left;
+            minDir = 1;
+        }
+
+        float up = abs(player.y - player.height / 2.0 - (dimensions.y + dimensions.height));
+        cout << "dist up = " << up << endl; 
+        if (up < min)
+        {
+            min = up;
+            minDir = 2;
+        }
+
+        float right = abs(player.x + player.width / 2.0 - dimensions.x);
+        cout << "dist right = -----------------------------------------" << right << endl;
+        if (right < min)
+        {
+            min = right;
+            minDir = 3;
+        }
+
+
+        switch (minDir)
+        {
+        case 2: // player's top
             player.y = dimensions.y + dimensions.height + player.height / 2.0;
             player.speed_y = 0;
             player.jumpingFrames = 0;
-            // cout << "pl top" << endl;
-        }
-        else if (leftRegion.isPointIn(point)) // player's right
-        {
+            cout << "pl top" << endl;
+            break;
+        case 1: // player's left
             player.x = dimensions.x - player.width / 2.0;
             player.speed_x = 0;
             player.framesAccelerated = 0;
             player.speed_x_outside = speed_x;
-            // cout << "pl right" << endl;
-        }
-        else if (topRegion.isPointIn(point)) // player's bot
-        {
+                        cout << "pl left" << endl;
+            break;
+        case 0: // player's bottom
             player.y = dimensions.y + 3.0 - player.height / 2.0;
             player.framesFalling = 0;
             player.speed_y = speed_y - 3.0;
@@ -55,19 +63,17 @@ void Platform::collision(Player &player)
             player.speed_x_outside = speed_x;
             player.speed_y_outside = speed_y;
             player.jumpingFrames = 0;
-            // cout << "pl bot" << endl;
-        }
-        else if (rightRegion.isPointIn(point)) // player's left
-        {
+                        cout << "pl bot" << endl;
+
+            break;
+        case 3: // player's right
             player.x = dimensions.x + dimensions.width + player.width / 2.0;
             player.speed_x = 0;
             player.framesAccelerated = 0;
             player.speed_x_outside = speed_x;
-            // cout << "pl left" << endl;
-        }
-        else
-        {
-            cout << "colliding not in a region" << endl;
+                        cout << "pl right" << endl;
+
+            break;
         }
     }
 }
@@ -103,3 +109,4 @@ void Platform::movePlatform()
         }
     }
 }
+*/
