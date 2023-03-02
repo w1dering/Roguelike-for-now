@@ -18,8 +18,8 @@ int main()
 
     // Player
     Player player;
-    player.x = 500;
-    player.y = 500;
+    player.x = 100;
+    player.y = 100;
 
     // Bow
     Bow bow;
@@ -31,10 +31,11 @@ int main()
     Platform plat1(0, 500, 100, 50);
     Platform plat2(0, 250, 100, 50);
     Platform plat3(0, 400, 100, 50, {Vector3{0.2, 0.1, 10}, Vector3{0, 0, 40}, Vector3{-0.2, -0.1, 20}, Vector3{0, 0, 40}, Vector3{0.2, 0.1, 10}});
-    Platform plat4(0, 100, 100, 50, {Vector3{0.5, 0, 3}, Vector3{0, 0, 54}, Vector3{-0.5, 0, 6}, Vector3{0, 0, 54}, Vector3{0.5, 0, 3}});
+    Platform plat4(0, 100, 100, 50, {Vector3{5, 0, 3}, Vector3{0, 0, 54}, Vector3{-0.5, 0, 6}, Vector3{0, 0, 54}, Vector3{0.5, 0, 3}});
 
     InitWindow(screenWidth, screenHeight, "Roguelike for now");
-    SetTargetFPS(15);
+    SetTargetFPS(60);
+    bool thFps = true;
 
     platforms.push_back(ground);
     platforms.push_back(plat1);
@@ -46,24 +47,50 @@ int main()
     {
         BeginDrawing();
         ClearBackground(BLACK);
- 
-        for (int i = 0; i < (int)platforms.size(); i++)
+
+        if (IsKeyDown(KEY_TAB))
         {
-            platforms[i].movePlatform();
+            if (!thFps)
+            {
+                SetTargetFPS(30);
+                thFps = true;
+            }
+            else
+            {
+                SetTargetFPS(1);
+                thFps = false;
+            }
         }
+
+        // for (int i = 0; i < (int)platforms.size(); i++)
+        // {
+        //     platforms[i].movePlatform();
+        // }
 
         player.move();
         player.airborne = true;
+        player.speed_x_outside = 0;
+        player.speed_y_outside = 0;
 
         for (int i = 0; i < (int)platforms.size(); i++)
         {
-            // platforms[i].movePlatform();
+            platforms[i].movePlatform();
             platforms[i].collision(player);
             if (player.airborne)
             {
                 player.airborne = !(player.y >= platforms[i].dimensions.y - player.height / 2.0 &&
                                     player.y <= platforms[i].dimensions.y + 2 - player.height / 2.0);
             }
+            // DrawRectangle(platforms[i].effectiveRectangle.x, platforms[i].effectiveRectangle.y, platforms[i].effectiveRectangle.width, platforms[i].effectiveRectangle.height, YELLOW);
+
+            if (i == (int) platforms.size() - 1)
+            {
+                player.prev_x = player.x;
+                player.prev_y = player.y;
+                cout << "prev_x TL updated to " << (player.prev_x - player.width / 2.0) << endl;
+                cout << "prev_y TL updated to " << (player.prev_y - player.height / 2.0) << endl;
+            }
+
             DrawRectangle(platforms[i].dimensions.x, platforms[i].dimensions.y, platforms[i].dimensions.width, platforms[i].dimensions.height, WHITE); // draw platform
         }
 
@@ -153,7 +180,6 @@ int main()
         {
             DrawCircle(player.x, player.y, player.width / 2.0, player.playerColor);
         }
-
 
         // rendering hp
         // DrawRectangle(10, 10, (screenWidth / 2.0) - 20, 80, BLACK);

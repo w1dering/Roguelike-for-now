@@ -33,6 +33,7 @@ public:
         dimensions.width = platform_w;
         dimensions.height = platform_h;
     }
+
     Platform(float platform_x, float platform_y, float platform_w, float platform_h, vector<Vector3> movementParam)
     {
         dimensions.x = platform_x;

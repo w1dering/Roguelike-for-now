@@ -37,8 +37,9 @@ void Player::move()
     if (dashing)
     {
         if (airborne)
+        {
             speed_y = 0;
-
+        }
         framesFalling = 0;
         jumpingFrames = 0;
 
@@ -243,8 +244,7 @@ void Player::move()
         }
         speed_x += framesAccelerated * currentMoveSpd / framesToAccelerate;
         speed_y += speed_y_outside;
-        cout << "sx out " << speed_x_outside << ", sy out " << speed_y_outside << endl;
-        cout << "sx " << speed_x << ", sy " << speed_y << endl;
+        // cout << "sx out " << speed_x_outside << ", sy out " << speed_y_outside << " |||||||||||||||| sx " << speed_x << ", sy " << speed_y << endl;
         if (IsKeyPressed(KEY_J))
         {
             if (swordSwingFrames == -1)
@@ -254,21 +254,16 @@ void Player::move()
         }
         if (swordSwingFrames != -1)
         {
-            swordSwingFrames --;
+            swordSwingFrames--;
         }
     }
 
     // jump functionality
-    if (IsKeyPressed(KEY_SPACE) && !airborne) // pressed jump on ground to start jump
+    if (IsKeyPressed(KEY_SPACE) && !airborne && !dashing) // pressed jump on ground to start jump
     {
         jumpingFrames = 30;
         airborne = true;
-        speed_y += 2.0; // must be the same as initial falling speed in platform.cpp
-
-        if (speed_y == 0 && !dashing)
-        {
-            speed_y = 6.525;
-        }
+        speed_y += speed_y_outside + 3.0 + 6.525; // must be the same as initial falling speed in platform.cpp
     }
     else if (IsKeyDown(KEY_SPACE) && jumpingFrames > 0) // holding jump to increase height
     {
