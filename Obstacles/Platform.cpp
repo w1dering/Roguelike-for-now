@@ -25,6 +25,7 @@ void Platform::collision(Player &player)
     Trapezoid rightRegion{Vector2{platTR.x, platTR.y + 2 + vOffset}, Vector2{boundTR.x, boundTR.y + 2 + vOffset},
                           platBR, boundBR, 1};
     Vector2 point{player.x, player.y};
+    Vector2 platCenter{dimensions.x + dimensions.width / (float)2.0, dimensions.y + dimensions.height / (float)2.0};
 
     // credits:
     // programming: hailey lyn
@@ -34,9 +35,9 @@ void Platform::collision(Player &player)
                            Rectangle{dimensions.x, dimensions.y, dimensions.width, dimensions.height}))
     {
         if (topRegion.isPointIn(point) || CheckCollisionPointRec(point, Rectangle{boundTL.x, boundTL.y, boundTR.x - boundTL.x,
-                                                                                  3 + vOffset})) // player's bot
+        3 + vOffset}) || CheckCollisionPointTriangle(point, topRegion.BL, topRegion.BR,
+        platCenter)) // player's bot
         {
-
             player.speed_x_base = 0.0;
 
             if (spikes[0])
@@ -65,7 +66,7 @@ void Platform::collision(Player &player)
                 player.maxMoveSpd = player.maxWalkSpeed + abs(speed_x);
             }
         }
-        else if (botRegion.isPointIn(point)) // player's top
+        else if (botRegion.isPointIn(point) || CheckCollisionPointTriangle(point, platBL, platBR, platCenter)) // player's top
         {
             if (spikes[1])
             {
@@ -82,7 +83,7 @@ void Platform::collision(Player &player)
             }
             // cout << "pl top" << endl;
         }
-        else if (leftRegion.isPointIn(point)) // player's right
+        else if (leftRegion.isPointIn(point) || CheckCollisionPointTriangle(point, leftRegion.TR, leftRegion.BR, platCenter)) // player's right
         {
             if (spikes[2])
             {
@@ -100,7 +101,7 @@ void Platform::collision(Player &player)
             }
             // cout << "pl right" << endl;
         }
-        else if (rightRegion.isPointIn(point)) // player's left
+        else if (rightRegion.isPointIn(point) || CheckCollisionPointTriangle(point, rightRegion.TL, rightRegion.TR, platCenter)) // player's left
         {
             if (spikes[3])
             {
