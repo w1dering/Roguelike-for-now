@@ -39,6 +39,7 @@ void Player::move()
         {
             speed_y = 0;
             speed_x_base = 0;
+            speed_x = 0;
         }
         framesFalling = 0;
         jumpingFrames = 0;

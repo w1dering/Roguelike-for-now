@@ -106,8 +106,9 @@ void Platform::collision(Player &player)
             if (spikes[3])
             {
                 WaitTime(0.2);
-                player.speed_x = 4.24;
-                player.speed_y = 4.24;
+                player.speed_x = 10;
+                player.speed_y = 10;
+                player.speed_x_base = 10;
                 player.hp -= 0.2 * player.maxHp;
                 player.dashing = false;
                 cout << "player's left spiked" << endl;
