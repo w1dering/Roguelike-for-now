@@ -20,6 +20,7 @@ int main()
     Player player;
     player.x = 100;
     player.y = 100;
+    player.airborne = true;
 
     // Bow
     Bow bow;
@@ -30,8 +31,8 @@ int main()
     Platform ground(0, screenHeight - 50, screenWidth + 50, 50);
     Platform plat1(0, 500, 100, 50);
     Platform plat2(0, 250, 100, 50);
-    Platform plat3(0, 400, 100, 50, {Vector3{0.2, 0.1, 10}, Vector3{0, 0, 40}, Vector3{-0.2, -0.1, 20}, Vector3{0, 0, 40}, Vector3{0.2, 0.1, 10}});
-    Platform plat4(0, 100, 100, 50, {Vector3{5, 0, 3}, Vector3{0, 0, 54}, Vector3{-0.5, 0, 6}, Vector3{0, 0, 54}, Vector3{0.5, 0, 3}});
+    Platform plat3(0, 400, 100, 50, {Vector3{0.2, 0.05, 20}, Vector3{0, 0, 40}, Vector3{-0.2, -0.05, 40}, Vector3{0, 0, 40}, Vector3{0.2, 0.05, 20}});
+    Platform plat4(600, 450, 100, 50, {Vector3{0, 0.6, 2}, Vector3{0, 0, 42}, Vector3{0, -0.6, 4}, Vector3{0, 0, 42}, Vector3{0, 0.6, 2}});
 
     InitWindow(screenWidth, screenHeight, "Roguelike for now");
     SetTargetFPS(60);
@@ -70,17 +71,11 @@ int main()
         player.move();
         player.airborne = true;
         player.speed_x_outside = 0;
-        player.speed_y_outside = 0;
-
         for (int i = 0; i < (int)platforms.size(); i++)
         {
             platforms[i].movePlatform();
             platforms[i].collision(player);
-            if (player.airborne)
-            {
-                player.airborne = !(player.y >= platforms[i].dimensions.y - player.height / 2.0 &&
-                                    player.y <= platforms[i].dimensions.y + 2 - player.height / 2.0);
-            }
+            
             // DrawRectangle(platforms[i].effectiveRectangle.x, platforms[i].effectiveRectangle.y, platforms[i].effectiveRectangle.width, platforms[i].effectiveRectangle.height, YELLOW);
 
             // if (i == (int) platforms.size() - 1)
@@ -184,6 +179,11 @@ int main()
         // rendering hp
         // DrawRectangle(10, 10, (screenWidth / 2.0) - 20, 80, BLACK);
         DrawRectangle(20, 20, (player.hp / player.maxHp * screenWidth / 2.0) - 40, 20, GREEN);
+
+        if (player.airborne)
+        {
+            DrawCircle(300, 300, 15, RED);
+        }
 
         EndDrawing();
     }

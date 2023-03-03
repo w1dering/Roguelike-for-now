@@ -47,13 +47,13 @@ void Platform::collision(Player &player)
         }
         else if (topRegion.isPointIn(point)) // player's bot
         {
-            player.y = dimensions.y + 3.0 - player.height / 2.0;
+            player.y = dimensions.y - player.height / 2.0 + 0.1;
             player.framesFalling = 0;
-            player.speed_y = speed_y - 3.0;
+            player.speed_y = speed_y;
             player.airborne = false;
             player.dashes = player.maxDashes;
             player.speed_x_outside = speed_x;
-            player.speed_y_outside = speed_y;
+            // player.speed_y_outside = speed_y;
             player.jumpingFrames = 0;
             // cout << "pl bot" << endl;
         }
@@ -69,6 +69,10 @@ void Platform::collision(Player &player)
         {
             cout << "colliding not in a region - probably clipped into platform" << endl;
         }
+    }
+    else
+    {
+
     }
 }
 

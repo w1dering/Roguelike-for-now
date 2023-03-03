@@ -256,38 +256,38 @@ void Player::move()
         {
             swordSwingFrames--;
         }
-    }
-
-    // jump functionality
-    if (IsKeyPressed(KEY_SPACE) && !airborne && !dashing) // pressed jump on ground to start jump
-    {
-        jumpingFrames = 30;
-        airborne = true;
-        speed_y += speed_y_outside + 3.0 + 6.525; // must be the same as initial falling speed in platform.cpp
-    }
-    else if (IsKeyDown(KEY_SPACE) && jumpingFrames > 0) // holding jump to increase height
-    {
-        jumpingFrames--;
-        speed_y -= 0.015 * (30.0 - jumpingFrames);
-    }
-    else if (airborne && jumpingFrames > 0)
-    {
-        speed_y /= 2.5;
-        jumpingFrames = 0;
-        framesFalling = 0;
-    }
-    else if (airborne && !dashing)
-    {
-        // if (speed_y > 0)
-        // {
-        //     speed_y = 0;
-        // }
-        speed_y -= 0.05 * framesFalling;
-        if (speed_y < terminalVelocity) // less than because terminal velocity is negative
+        // jump functionality
+        if (IsKeyPressed(KEY_SPACE) && !airborne && !dashing) // pressed jump on ground to start jump
         {
-            speed_y = terminalVelocity;
+            jumpingFrames = 30;
+            airborne = true;
+            speed_y *= 2.0; // the scale of the moving platform's speed on the player: lower number = less momentum transfer
+            speed_y += 6.525; // must be the same as initial falling speed in platform.cpp
         }
-        framesFalling++;
+        else if (IsKeyDown(KEY_SPACE) && jumpingFrames > 0) // holding jump to increase height
+        {
+            jumpingFrames--;
+            speed_y -= 0.015 * (30.0 - jumpingFrames);
+        }
+        else if (airborne && jumpingFrames > 0)
+        {
+            speed_y /= 2.5;
+            jumpingFrames = 0;
+            framesFalling = 0;
+        }
+        else if (airborne && !dashing)
+        {
+            // if (speed_y > 0)
+            // {
+            //     speed_y = 0;
+            // }
+            speed_y -= 0.05 * framesFalling;
+            if (speed_y < terminalVelocity) // less than because terminal velocity is negative
+            {
+                speed_y = terminalVelocity;
+            }
+            framesFalling++;
+        }
     }
 
     if (showDashShadows && dashingFrames % 3 == 0)
