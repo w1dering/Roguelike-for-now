@@ -29,7 +29,7 @@ int main()
     // move below to platform.cpp class (eventually)
     vector<Platform> platforms;
     Platform ground(0, screenHeight - 50, screenWidth + 50, 50);
-    Platform plat1(0, 500, 100, 50);
+    Platform plat1(0, 500, 100, 50, {true, true, true, true});
     Platform plat2(0, 250, 100, 50);
     Platform plat3(0, 400, 100, 50, {Vector3{0.2, 0.05, 20}, Vector3{0, 0, 40}, Vector3{-0.2, -0.05, 40}, Vector3{0, 0, 40}, Vector3{0.2, 0.05, 20}});
     Platform plat4(600, 450, 100, 50, {Vector3{0, 0.6, 2}, Vector3{0, 0, 42}, Vector3{0, -0.6, 4}, Vector3{0, 0, 42}, Vector3{0, 0.6, 2}});
@@ -86,6 +86,39 @@ int main()
             //     cout << "prev_y TL updated to " << (player.prev_y - player.height / 2.0) << endl;
             // }
 
+            for (int j = 0; j < 4; j++)
+            {
+                if (platforms[i].spikes[j])
+                {
+                    switch (j)
+                    {
+                        case 0:
+                            for (int x = platforms[i].dimensions.x; x < platforms[i].dimensions.x + platforms[i].dimensions.width; x += 2)
+                            {
+                                DrawRectangle(x, platforms[i].dimensions.y - 2, 1, 2, WHITE);
+                            }
+                            break;
+                        case 1:
+                            for (int x = platforms[i].dimensions.x; x < platforms[i].dimensions.x + platforms[i].dimensions.width; x += 2)
+                            {
+                                DrawRectangle(x, platforms[i].dimensions.y + platforms[i].dimensions.height, 1, 2, WHITE);
+                            }
+                            break;
+                        case 2:
+                            for (int y = platforms[i].dimensions.y; y < platforms[i].dimensions.y + platforms[i].dimensions.height; y += 2)
+                            {
+                                DrawRectangle(platforms[i].dimensions.x - 2, y, 2, 1, WHITE);
+                            }
+                            break;
+                        case 3:    
+                            for (int y = platforms[i].dimensions.y; y < platforms[i].dimensions.y + platforms[i].dimensions.height; y += 2)
+                            {
+                                DrawRectangle(platforms[i].dimensions.x + platforms[i].dimensions.width, y, 2, 1, WHITE);
+                            }
+                            break;
+                    }
+                }
+            }
             DrawRectangle(platforms[i].dimensions.x, platforms[i].dimensions.y, platforms[i].dimensions.width, platforms[i].dimensions.height, WHITE); // draw platform
         }
 

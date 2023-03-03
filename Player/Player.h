@@ -21,6 +21,8 @@ public:
     Color playerColor = WHITE;
     int hp = 100;
     int maxHp = 100;
+    int iFrames = 0;
+    int damageIFrames = 0;
 
     // player movement
     float maxMoveSpd = 5;
