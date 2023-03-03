@@ -21,9 +21,8 @@ void Player::move()
         dirFacing = netDir_x; // if netDir_x is not 0, dir facing is where you're going
     }
 
-    speed_x = speed_x_outside;
     // walk key
-    currentMoveSpd = (IsKeyDown(KEY_LEFT_CONTROL)) ? (0.5 * maxMoveSpd) : (maxMoveSpd);
+    currentMoveSpd = (IsKeyDown(KEY_LEFT_CONTROL)) ? (0.5 * maxWalkSpeed) : (maxWalkSpeed);
 
     // dashing
     if (IsKeyPressed(KEY_LEFT_SHIFT) && dashes > 0 && !dashing)
@@ -39,6 +38,7 @@ void Player::move()
         if (airborne)
         {
             speed_y = 0;
+            speed_x_base = 0;
         }
         framesFalling = 0;
         jumpingFrames = 0;
@@ -51,7 +51,6 @@ void Player::move()
             {
                 if (dashingFrames != 16)
                 {
-                    framesAccelerated = 0;
                     if (dashingFrames != 0)
                     {
                         speed_y = dashDistance;
@@ -64,7 +63,6 @@ void Player::move()
                 else
                 {
                     speed_x = dirFacing * dashDistance;
-                    framesAccelerated = dirFacing * framesToAccelerate;
                     lastKeyPressed = dirFacing == 1 ? KEY_D : KEY_A;
                 }
             }
@@ -73,23 +71,19 @@ void Player::move()
                 if (dashingFrames != 16)
                 {
                     speed_y = -dashDistance;
-                    framesAccelerated = 0;
                 }
                 else
                 {
                     speed_x = dirFacing * dashDistance;
-                    framesAccelerated = dirFacing * framesToAccelerate;
                 }
             }
             else if (lastKeyPressed == KEY_A)
             {
                 speed_x = -dashDistance;
-                framesAccelerated = -framesToAccelerate;
             }
             else if (lastKeyPressed == KEY_D)
             {
                 speed_x = dashDistance;
-                framesAccelerated = framesToAccelerate;
             }
             else if (lastKeyPressed == 1) // 1 = NE, 2 = NW, 3 = SW, 4 = SE (quadrants)
             {
@@ -102,7 +96,6 @@ void Player::move()
                 {
                     speed_y = dashDistance / 2.0000;
                 }
-                framesAccelerated = (int)(framesToAccelerate / sqrt(2));
             }
             else if (lastKeyPressed == 2)
             {
@@ -115,25 +108,21 @@ void Player::move()
                 {
                     speed_y = dashDistance / 2.0000;
                 }
-                framesAccelerated = (int)(-framesToAccelerate / sqrt(2));
             }
             else if (lastKeyPressed == 3)
             {
                 speed_x = -dashDistance / sqrt(2);
                 speed_y = -dashDistance / sqrt(2);
-                framesAccelerated = (int)(-framesToAccelerate / sqrt(2));
             }
             else if (lastKeyPressed == 4)
             {
                 speed_x = dashDistance / sqrt(2);
                 speed_y = -dashDistance / sqrt(2);
-                framesAccelerated = (int)(framesToAccelerate / sqrt(2));
             }
         }
         else if (netDir_x == 0 && netDir_y == 1) // straight up
         {
             lastKeyPressed = KEY_W;
-            framesAccelerated = 0;
             if (dashingFrames != 0)
             {
                 speed_y = dashDistance;
@@ -147,13 +136,11 @@ void Player::move()
         {
             speed_y = -dashDistance;
             lastKeyPressed = KEY_S;
-            framesAccelerated = 0;
         }
         else if (netDir_x == 1 && netDir_y == 0) // straight right
         {
             speed_x = dashDistance;
             lastKeyPressed = KEY_D;
-            framesAccelerated = framesToAccelerate;
         }
         else if (netDir_x == 1 && netDir_y == 1) // up right
         {
@@ -167,20 +154,17 @@ void Player::move()
                 speed_y = dashDistance / 2.0000;
             }
             lastKeyPressed = 1; // quadrant 1
-            framesAccelerated = (int)(framesToAccelerate / sqrt(2));
         }
         else if (netDir_x == 1 && netDir_y == -1) // down right
         {
             speed_x = dashDistance / sqrt(2);
             speed_y = -dashDistance / sqrt(2);
             lastKeyPressed = 4; // quadrant 4
-            framesAccelerated = (int)(framesToAccelerate / sqrt(2));
         }
         else if (netDir_x == -1 && netDir_y == 0) // straight left
         {
             speed_x = -dashDistance;
             lastKeyPressed = KEY_A;
-            framesAccelerated = -framesToAccelerate;
         }
         else if (netDir_x == -1 && netDir_y == 1) // up left
         {
@@ -194,14 +178,12 @@ void Player::move()
                 speed_y = dashDistance / 2.0000;
             }
             lastKeyPressed = 2; // quadrant 2
-            framesAccelerated = (int)(-framesToAccelerate / sqrt(2));
         }
         else if (netDir_x == -1 && netDir_y == -1) // down left
         {
             speed_x = -dashDistance / sqrt(2);
             speed_y = -dashDistance / sqrt(2);
             lastKeyPressed = 3; // quadrant 3
-            framesAccelerated = (int)(-framesToAccelerate / sqrt(2));
         }
         dashingFrames--;
         if (dashingFrames == -1)
@@ -211,40 +193,97 @@ void Player::move()
     }
     else // not dashing
     {
+        if (speed_x_base > 0 && airborne)
+        {
+            speed_x_base -= 0.05;
+            if (speed_x_base < 0)
+            {
+                speed_x_base = 0;
+            }
+        }
+        else if (speed_x_base < 0 && airborne)
+        {
+            speed_x_base += 0.05;
+            if (speed_x_base > 0)
+            {
+                speed_x_base = 0;
+            }
+        }
         if (IsKeyDown(KEY_D) && !IsKeyDown(KEY_A))
         {
-            if (framesAccelerated != framesToAccelerate)
+            speed_x += 0.4 * currentMoveSpd;
+            if (airborne && speed_x > speed_x_base + currentMoveSpd)
             {
-                framesAccelerated++;
+                speed_x -= 0.05 * framesFalling;
+                if (speed_x < speed_x_base + currentMoveSpd)
+                {
+                    speed_x = currentMoveSpd;
+                }
             }
             lastKeyPressed = KEY_D;
         }
         else if (IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))
         {
-            if (framesAccelerated != -framesToAccelerate)
+            speed_x -= 0.4 * currentMoveSpd;
+            if (airborne && speed_x < speed_x_base - currentMoveSpd)
             {
-                framesAccelerated--;
+                speed_x += 0.05 * framesFalling;
+                if (speed_x > speed_x_base - currentMoveSpd)
+                {
+                    speed_x = -currentMoveSpd;
+                }
             }
             lastKeyPressed = KEY_A;
         }
-        else if (IsKeyDown(KEY_W) == IsKeyDown(KEY_S) && IsKeyDown(KEY_A) == IsKeyDown(KEY_D))
+        else
         {
-            if (framesAccelerated > 0)
+            if (airborne)
             {
-                framesAccelerated--;
-            }
-            else if (framesAccelerated < 0)
-            {
-                framesAccelerated++;
+                if (speed_x > 0)
+                {
+                    speed_x -= 0.05 * framesFalling;
+                    if (speed_x < 0)
+                    {
+                        speed_x = 0;
+                    }
+                }
+                else if (speed_x < 0)
+                {
+                    speed_x += 0.05 * framesFalling;
+                    if (speed_x > 0)
+                    {
+                        speed_x = 0;
+                    }
+                }
             }
         }
-        else // W or S are held
+        if (speed_x > speed_x_base && !airborne)
         {
-            framesAccelerated = 0;
+            speed_x -= 0.2 * currentMoveSpd; // decelerates player if on ground
+
+            if (speed_x < speed_x_base)
+            {
+                speed_x = speed_x_base;
+            }
         }
-        speed_x += framesAccelerated * currentMoveSpd / framesToAccelerate;
-        speed_y += speed_y_outside;
-        // cout << "sx out " << speed_x_outside << ", sy out " << speed_y_outside << " |||||||||||||||| sx " << speed_x << ", sy " << speed_y << endl;
+        else if (speed_x < speed_x_base && !airborne)
+        {
+            speed_x += 0.2 * currentMoveSpd;
+            if (speed_x > speed_x_base)
+            {
+                speed_x = speed_x_base;
+            }
+        }
+
+        if (speed_x > currentMoveSpd + speed_x_base) // caps speed
+        {
+            speed_x = currentMoveSpd + speed_x_base;
+        }
+        else if (speed_x < -currentMoveSpd + speed_x_base)
+        {
+            speed_x = -currentMoveSpd + speed_x_base;
+        }
+
         if (IsKeyPressed(KEY_J))
         {
             if (swordSwingFrames == -1)
@@ -261,7 +300,8 @@ void Player::move()
         {
             jumpingFrames = 30;
             airborne = true;
-            speed_y *= 2.0; // the scale of the moving platform's speed on the player: lower number = less momentum transfer
+            // speed_x *= 1.4;
+            speed_y *= 2.0;   // the scale of the moving platform's speed on the player: lower number = less momentum transfer
             speed_y += 6.525; // must be the same as initial falling speed in platform.cpp
         }
         else if (IsKeyDown(KEY_SPACE) && jumpingFrames > 0) // holding jump to increase height
@@ -281,6 +321,7 @@ void Player::move()
             // {
             //     speed_y = 0;
             // }
+
             speed_y -= 0.05 * framesFalling;
             if (speed_y < terminalVelocity) // less than because terminal velocity is negative
             {

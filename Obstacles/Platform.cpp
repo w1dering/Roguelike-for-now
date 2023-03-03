@@ -16,26 +16,63 @@ void Platform::collision(Player &player)
     Vector2 platBL{dimensions.x, dimensions.y + dimensions.height};
     Vector2 platBR{dimensions.x + dimensions.width, dimensions.y + dimensions.height};
 
-    Trapezoid topRegion{boundTL, boundTR, platTL, platTR, 2};
-    Trapezoid leftRegion{boundTL, platTL, boundBL, platBL, 3};
+    float vOffset = (speed_y < 0) ? (-speed_y) : 0;
+
+    Trapezoid topRegion{Vector2{boundTL.x, boundTL.y + 2 + vOffset}, Vector2{boundTR.x, boundTR.y + 2 + vOffset},
+                        Vector2{platTL.x, platTL.y + 2 + vOffset}, Vector2{platTR.x, platTR.y + 2 + vOffset}, 2};
+    Trapezoid leftRegion{Vector2{boundTL.x, boundTL.y + 2 + vOffset}, Vector2{platTL.x, platTL.y + 2 + vOffset}, boundBL, platBL, 3};
     Trapezoid botRegion{platBL, platBR, boundBL, boundBR, 0};
-    Trapezoid rightRegion{platTR, boundTR, platBR, boundBR, 1};
+    Trapezoid rightRegion{Vector2{platTR.x, platTR.y + 2 + vOffset}, Vector2{boundTR.x, boundTR.y + 2 + vOffset},
+                          platBR, boundBR, 1};
     Vector2 point{player.x, player.y};
 
     // credits:
     // programming: hailey lyn
     // design: hailey lyn
-    // coolness: hailey lyn
-
+    // coolness: hailey lynF
     if (CheckCollisionRecs(Rectangle{player.x - (player.width / (float)2.0), player.y - (player.height / (float)2.0), player.width, player.height},
                            Rectangle{dimensions.x, dimensions.y, dimensions.width, dimensions.height}))
     {
-        if (botRegion.isPointIn(point)) // player's top
+        if (topRegion.isPointIn(point) || CheckCollisionPointRec(point, Rectangle{boundTL.x, boundTL.y, boundTR.x - boundTL.x,
+                                                                                  3 + vOffset})) // player's bot
+        {
+
+            player.speed_x_base = 0.0;
+
+            if (spikes[0])
+            {
+                player.speed_y = 8.0;
+                player.hp -= 0.2 * player.maxHp;
+                cout << "player's bot spiked" << endl;
+                player.dashing = false;
+            }
+            else
+            {
+                player.y = dimensions.y - player.height / 2.0 + 0.1;
+                player.framesFalling = 0;
+                if (!player.dashing)
+                {
+                    player.speed_y = speed_y;
+                    player.speed_x_base = speed_x;
+                }
+                player.airborne = false;
+                player.dashes = player.maxDashes;
+                // if (player.speed_x_outside == 0.0)
+                // {
+                // }
+                player.jumpingFrames = 0;
+                // cout << "pl bot" << endl;
+                player.maxMoveSpd = player.maxWalkSpeed + abs(speed_x);
+            }
+        }
+        else if (botRegion.isPointIn(point)) // player's top
         {
             if (spikes[1])
             {
                 player.hp -= 0.2 * player.maxHp;
+                player.speed_y = -1.0;
                 cout << "player's top spiked" << endl;
+                player.dashing = false;
             }
             else
             {
@@ -52,55 +89,34 @@ void Platform::collision(Player &player)
                 player.speed_x = -4.24; // outside??
                 player.speed_y = 4.24;
                 player.hp -= 0.2 * player.maxHp;
-                cout << "player's right spiked" << endl;;
+                cout << "player's right spiked" << endl;
+                player.dashing = false;
             }
             else
             {
                 player.x = dimensions.x - player.width / 2.0;
-                player.speed_x = 0;
-                player.framesAccelerated = 0;
-                player.speed_x_outside = speed_x;
+                player.speed_x = speed_x;
+                player.maxMoveSpd = player.maxWalkSpeed + abs(speed_x);
             }
             // cout << "pl right" << endl;
-        }
-        else if (topRegion.isPointIn(point)) // player's bot
-        {
-            if (spikes[0])
-            {
-                player.speed_y = 6.0;
-                player.hp -= 0.2 * player.maxHp;
-                cout << "player's bot spiked" << endl;;
-            }
-            else
-            {
-                player.y = dimensions.y - player.height / 2.0 + 0.1;
-                player.framesFalling = 0;
-                player.speed_y = speed_y;
-                player.airborne = false;
-                player.dashes = player.maxDashes;
-                player.speed_x_outside = speed_x;
-                // player.speed_y_outside = speed_y;
-                player.jumpingFrames = 0;
-                // cout << "pl bot" << endl;
-            }
         }
         else if (rightRegion.isPointIn(point)) // player's left
         {
             if (spikes[3])
             {
                 WaitTime(0.2);
-                player.speed_x = 50;
-                player.framesAccelerated = 5;
-                player.speed_y = 4.5;
+                player.speed_x = 4.24;
+                player.speed_y = 4.24;
                 player.hp -= 0.2 * player.maxHp;
+                player.dashing = false;
                 cout << "player's left spiked" << endl;
             }
             else
             {
                 player.x = dimensions.x + dimensions.width + player.width / 2.0;
-                player.speed_x = 0;
-                player.framesAccelerated = 0;
-                player.speed_x_outside = speed_x;
+                player.speed_x = speed_x;
+                player.maxMoveSpd = player.maxWalkSpeed + abs(speed_x);
+
                 // cout << "pl left" << endl;
             }
         }

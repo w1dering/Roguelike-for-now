@@ -70,15 +70,17 @@ int main()
 
         player.move();
         player.airborne = true;
-        player.speed_x_outside = 0;
+        player.maxMoveSpd = player.maxWalkSpeed;
+
+
         for (int i = 0; i < (int)platforms.size(); i++)
         {
             platforms[i].movePlatform();
             platforms[i].collision(player);
-            
+
             // DrawRectangle(platforms[i].effectiveRectangle.x, platforms[i].effectiveRectangle.y, platforms[i].effectiveRectangle.width, platforms[i].effectiveRectangle.height, YELLOW);
 
-            // if (i == (int) platforms.size() - 1)
+             // if (i == (int) platforms.size() - 1)
             // {
             //     player.prev_x = player.x;
             //     player.prev_y = player.y;
@@ -86,41 +88,43 @@ int main()
             //     cout << "prev_y TL updated to " << (player.prev_y - player.height / 2.0) << endl;
             // }
 
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < 4; j++) // drawing spikes on platforms
             {
                 if (platforms[i].spikes[j])
                 {
                     switch (j)
                     {
-                        case 0:
-                            for (int x = platforms[i].dimensions.x; x < platforms[i].dimensions.x + platforms[i].dimensions.width; x += 2)
-                            {
-                                DrawRectangle(x, platforms[i].dimensions.y - 2, 1, 2, WHITE);
-                            }
-                            break;
-                        case 1:
-                            for (int x = platforms[i].dimensions.x; x < platforms[i].dimensions.x + platforms[i].dimensions.width; x += 2)
-                            {
-                                DrawRectangle(x, platforms[i].dimensions.y + platforms[i].dimensions.height, 1, 2, WHITE);
-                            }
-                            break;
-                        case 2:
-                            for (int y = platforms[i].dimensions.y; y < platforms[i].dimensions.y + platforms[i].dimensions.height; y += 2)
-                            {
-                                DrawRectangle(platforms[i].dimensions.x - 2, y, 2, 1, WHITE);
-                            }
-                            break;
-                        case 3:    
-                            for (int y = platforms[i].dimensions.y; y < platforms[i].dimensions.y + platforms[i].dimensions.height; y += 2)
-                            {
-                                DrawRectangle(platforms[i].dimensions.x + platforms[i].dimensions.width, y, 2, 1, WHITE);
-                            }
-                            break;
+                    case 0:
+                        for (int x = platforms[i].dimensions.x; x < platforms[i].dimensions.x + platforms[i].dimensions.width; x += 2)
+                        {
+                            DrawRectangle(x, platforms[i].dimensions.y - 2, 1, 2, WHITE);
+                        }
+                        break;
+                    case 1:
+                        for (int x = platforms[i].dimensions.x; x < platforms[i].dimensions.x + platforms[i].dimensions.width; x += 2)
+                        {
+                            DrawRectangle(x, platforms[i].dimensions.y + platforms[i].dimensions.height, 1, 2, WHITE);
+                        }
+                        break;
+                    case 2:
+                        for (int y = platforms[i].dimensions.y; y < platforms[i].dimensions.y + platforms[i].dimensions.height; y += 2)
+                        {
+                            DrawRectangle(platforms[i].dimensions.x - 2, y, 2, 1, WHITE);
+                        }
+                        break;
+                    case 3:
+                        for (int y = platforms[i].dimensions.y; y < platforms[i].dimensions.y + platforms[i].dimensions.height; y += 2)
+                        {
+                            DrawRectangle(platforms[i].dimensions.x + platforms[i].dimensions.width, y, 2, 1, WHITE);
+                        }
+                        break;
                     }
                 }
             }
             DrawRectangle(platforms[i].dimensions.x, platforms[i].dimensions.y, platforms[i].dimensions.width, platforms[i].dimensions.height, WHITE); // draw platform
         }
+
+        cout << "speed_x: " << player.speed_x << endl;
 
         // doesn't let the ball go out of bounds
         if (player.x >= screenWidth - player.width / 2.0)

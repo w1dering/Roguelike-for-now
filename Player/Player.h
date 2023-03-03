@@ -19,19 +19,17 @@ public:
 
     // player stats
     Color playerColor = WHITE;
-    int hp = 100;
-    int maxHp = 100;
+    float hp = 100.0;
+    float maxHp = 100.0;
     int iFrames = 0;
     int damageIFrames = 0;
 
     // player movement
-    float maxMoveSpd = 5;
-    float framesToAccelerate = 5;
-    float framesAccelerated = 0;
+    float maxMoveSpd = 5.0;
+    const float maxWalkSpeed = 5.0;
     float speed_x = 0.0;
     float speed_y = 0.0;
-    float speed_x_outside = 0.0;
-    float speed_y_outside = 0.0;
+    float speed_x_base = 0.0;
     float prevSpeed_x = 0.0;
     float prevSpeed_y = 0.0;
     float prev_x = 0;
