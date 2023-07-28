@@ -1,4 +1,4 @@
-This is a small project developed by Ryan and Una. It was created using [raylib][https://www.raylib.com/], an open-source library that streamlines the process of game development and creating graphical interfaces in many languages.
+This is a small project developed by Ryan and Una. It was created using (raylib)[https://www.raylib.com/], an open-source library that streamlines the process of game development and creating graphical interfaces in many languages.
 
 **Please check out the other branches (develop and why), as they are far more updated than the main branch**
 
