@@ -1,26 +1,14 @@
-# Raylib C++ Starter Template
+This is a small project developed by Ryan and Una. It was created using [raylib][https://www.raylib.com/], an open-source library that streamlines the process of game development and creating graphical interfaces in many languages.
 
-Raylib C++ Starter Template for Visual Studio Code on Windows.
+**Please check out the other branches (develop and why), as they are far more updated than the main branch**
 
-This demo project contains a bouncing ball raylib example program.
+Currently, we haven't figured out how to export the game, so you can't run it if you download it
 
-It works with raylib version 4.2.
-Tested on both Windows 10 and Windows 11.
+FEATURES:
+- a ball
+  - it can move, jump, dash and shoot rectangles
+- gravity
+- moving platforms
+- messy code
 
-# Video Tutorial
-
-<p align="center">
-  <img src="preview.jpg" alt="" width="800">
-</p>
-
-<p align="center">
-🎥 <a href="https://www.youtube.com/watch?v=PaAcVk5jUd8">Video Tutorial on YouTube</a>
-</p>
-
-<br>
-<br>
-<p align="center">
-| 📺 <a href="https://www.youtube.com/channel/UC3ivOTE5EgpmF2DHLBmWIWg">My YouTube Channel</a>
-| 🌍 <a href="http://www.educ8s.tv">My Website</a> | <br>
-</p>
-
+[VIDEO DEMONSTRATION](https://youtu.be/F69clsxizJY)
